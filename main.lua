@@ -1,5 +1,5 @@
 lg = love.graphics
-require("src/lib/global_functions")
+require("lib/global_functions")
 
 local world = love.physics.newWorld()
 world:setGravity(0, 1000)
