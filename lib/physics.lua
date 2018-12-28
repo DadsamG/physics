@@ -30,16 +30,34 @@ local function _new_collider(world, type, ...)
     return obj
 end   
 
-local World = {}
-
-function World:add_circle(x, y, r, settings) return _new_collider(self, 'circle', x, y, r, settings) end
-function World:add_rectangle(x, y, w, h, settings) return _new_collider(self, 'rectangle', x, y, w, h, settings) end
-function World:add_polygon(vertices, settings) return _new_collider(self, 'polygon', vertices, settings) end
-function World:add_line(x1, y1, x2, y2, settings) return _new_collider(self, 'line', x1, y1, x2, y2, settings) end
-function World:add_chain(vertices, loop, settings) return _new_collider(self, 'chain', vertices, loop, settings) end
-
-
 local Collider = {}
 
 function Collider:add_shape(shape) end
 function Collider:destroy() end
+
+
+
+
+local World = {}
+
+
+
+function World:__call(x,y,z) 
+    local obj = {}
+        obj.box2d_world = lp.newWorld(x,y,z)
+        _set_funcs(obj, obj.box2d_world)
+
+
+    return setmetatable(obj, {__index = World})
+end
+
+function World:add_circle(x, y, r, settings) return _new_collider(self.box2d_world, 'circle', x, y, r, settings) end
+function World:add_rectangle(x, y, w, h, settings) return _new_collider(self.box2d_world, 'rectangle', x, y, w, h, settings) end
+function World:add_polygon(vertices, settings) return _new_collider(self.box2d_world, 'polygon', vertices, settings) end
+function World:add_line(x1, y1, x2, y2, settings) return _new_collider(self.box2d_world, 'line', x1, y1, x2, y2, settings) end
+function World:add_chain(vertices, loop, settings) return _new_collider(self.box2d_world, 'chain', vertices, loop, settings) end
+
+
+
+
+return setmetatable({}, World)
