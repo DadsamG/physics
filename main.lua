@@ -1,10 +1,10 @@
 lg = love.graphics
 require("lib/global_functions")
 require("run")
---World = require("lib/physics")
+World = require("lib/physics")
 
 
--- world = World()
+world = World()
 
 -- world:setCallbacks(
 --     function(a, b, coll) end, -- begin
@@ -14,52 +14,29 @@ require("run")
 -- )
 
 
--- ball = world:add_circle(100, 100, 20)
--- ball2 = world:add_circle(200, 100, 20)
--- wall1 = world:add_line(1, 1,  1, 800)
+ball = world:add_circle(500, 500, 20)
+ball:setRestitution(1)
+ball2 = world:add_circle(200, 100, 20)
+ball3 = world:add_circle(300, 100, 20)
+ball4 = world:add_circle(400, 100, 20)
+ball5 = world:add_circle(500, 100, 20)
+ball6 = world:add_circle(600, 100, 20)
+
+wall1 = world:add_rectangle(400,   1, 800,   1, {type = "static"})
+wall2 = world:add_rectangle(400, 599, 800,   1, {type = "static"})
+wall3 = world:add_rectangle(1,   300,   1, 600, {type = "static"})
+wall4 = world:add_rectangle(799, 300,   1, 600, {type = "static"})
 
 
-local world = love.physics.newWorld()
-    world:setGravity(0, 1000)
+rect = world:add_rectangle(400, 400, 100, 200)
 
+line = world:add_line(50, 50, 500, 10)
+line:setRestitution(1)
 
-world:setCallbacks(
-    function(a, b, coll) print(b:getBody():getUserData() .. ", " .. a:getBody():getUserData()) end, -- begin
-    function(a, b, coll) end, -- end 
-    function(a, b, coll) end, -- pre
-    function(a, b, coll, normalimpulse1, tangentimpulse1, normalimpulse2, tangentimpulse2, ...) end -- post
-)
+chain = world:add_chain(false,{50, 50, 100, 100, 100, 160})
+chain:setRestitution(1)
 
-local ground = {}
-    ground.body = love.physics.newBody(world, lg.getWidth()/2, lg.getHeight()) 
-    ground.shape = love.physics.newRectangleShape(800, 20)
-    ground.shape2 = love.physics.newRectangleShape(200, 0,20, 100, 20)
-    ground.fixture = love.physics.newFixture(ground.body, ground.shape)
-    ground.fixture2 = love.physics.newFixture(ground.body, ground.shape2)
-    ground.body:setUserData("ground")
-
-local ball = {}
-    ball.body = love.physics.newBody(world, 400, 100, "dynamic")
-    ball.shape = love.physics.newCircleShape( 20)
-    ball.fixture = love.physics.newFixture(ball.body, ball.shape, 1)
-    ball.fixture:setRestitution(0.9)
-    ball.body:setUserData("ball")
-
-local block = {}
-    block.body = love.physics.newBody(world, 200, 550, "dynamic")
-    block.shape = love.physics.newRectangleShape(0, 0, 50, 100)
-    block.fixture = love.physics.newFixture(block.body, block.shape, 1)
-    block.body:setUserData("block")
-
-
-local line = {}
-    line.body = love.physics.newBody(world, 200, 550, "dynamic")
-    line.shape = love.physics.newChainShape(true,10, 400, 300, 500, 200, 100)
-    line.fixture = love.physics.newFixture(line.body, line.shape, 5)
-    line.body:setUserData("chain")
-
-
-print(line.fixture:isSensor())
+poly = world:add_polygon({200,200, 200, -30, -30,300, 300,300, 300,200})
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
@@ -77,22 +54,28 @@ end
 
 function love.draw()
 
-    lg.setColor(1,1,1)
-    lg.line(line.shape:getPoints())
-
-    lg.setColor(0.28, 0.63, 0.05)
-    lg.polygon("fill", ground.body:getWorldPoints(ground.shape:getPoints()))
-    lg.polygon("fill", ground.body:getWorldPoints(ground.shape2:getPoints()))
-
-    lg.setColor(0.76, 0.18, 0.05)
-    lg.circle("fill", ball.body:getX(), ball.body:getY(), ball.shape:getRadius())
+    lg.circle("line", ball:getX(), ball:getY(), ball:getRadius())
+    lg.circle("line", ball2:getX(), ball2:getY(), ball2:getRadius())
+    lg.circle("line", ball3:getX(), ball3:getY(), ball3:getRadius())
+    lg.circle("line", ball4:getX(), ball4:getY(), ball4:getRadius())
+    lg.circle("line", ball5:getX(), ball5:getY(), ball5:getRadius())
+    lg.circle("line", ball6:getX(), ball6:getY(), ball6:getRadius())
 
 
-    lg.setColor(0.1, 0.2, 0.6)
-    lg.polygon("fill", block.body:getWorldPoints(block.shape:getPoints()))
+    lg.polygon("line", wall1:getWorldPoints(wall1:getPoints()))
+    lg.polygon("line", wall2:getWorldPoints(wall2:getPoints()))
+    lg.polygon("line", wall3:getWorldPoints(wall3:getPoints()))
+    lg.polygon("line", wall4:getWorldPoints(wall4:getPoints()))
 
-    --lg.circle("line", ball:getX(), ball:getY(), ball:getRadius())
-    --lg.circle("line", ball2:getX(), ball2:getY(), ball2:getRadius())
-    --love.graphics.line(wall1:getPoints( ))
+    lg.line(line:getWorldPoints(line:getPoints()))
+
+    local points = {chain:getWorldPoints(chain:getShape():getPoints())}    
+    for i = 1, #points, 2 do
+        if i < #points-2 then love.graphics.line(points[i], points[i+1], points[i+2], points[i+3]) end
+    end
+
+    lg.polygon("line", rect:getWorldPoints(rect:getPoints()))
+    lg.polygon("line", poly:getWorldPoints(poly:getPoints()))
 
 end
+

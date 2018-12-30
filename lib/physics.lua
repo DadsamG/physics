@@ -9,11 +9,12 @@ end
 
 local function _new_collider(world, type, ...)
     local _a, body, shape = {...}
-    if     type == 'circle'    then body, shape = lp.newBody(world,_a[1],_a[2],(_a[4] and _a[4].body_type) or 'dynamic'), lp.newCircleShape(_a[3])
-    elseif type == 'rectangle' then body, shape = lp.newBody(world,_a[1]+_a[3]/2,_a[2]+_a[4]/2,(_a[5] and _a[5].body_type) or 'dynamic'), lp.newRectangleShape(_a[3], _a[4])
-    elseif type == 'polygon'   then body, shape = lp.newBody(world, 0, 0, (_a[2] and _a[2].body_type) or 'dynamic'), lp.newPolygonShape(unpack(_a[1]))
-    elseif type == 'line'      then body, shape = lp.newBody(world, 0, 0, (_a[5] and _a[5].body_type) or 'dynamic'), lp.newEdgeShape(_a[1], _a[2], _a[3], _a[4])
-    elseif type == 'chain'     then body, shape = lp.newBody(world, 0, 0, (_a[3] and _a[3].body_type) or 'dynamic'), lp.newChainShape(_a[1], unpack(_a[2])) end
+    if     type == 'circle' then body, shape = lp.newBody(world, _a[1], _a[2], (pcall(function() return _a[4].type end) or "dynamic")), lp.newCircleShape(_a[3])
+    elseif type == 'rect'   then body, shape = lp.newBody(world, _a[1], _a[2], (pcall(function() return _a[5].type end) or "dynamic")), lp.newRectangleShape(_a[3], _a[4])
+    elseif type == 'poly'   then body, shape = lp.newBody(world, 0, 0, (pcall(function() return _a[2].type end) or "dynamic")), lp.newPolygonShape(unpack(_a[1]))
+    elseif type == 'line'   then body, shape = lp.newBody(world, 0, 0, (pcall(function() return _a[5].type end) or "dynamic")), lp.newEdgeShape(_a[1], _a[2], _a[3], _a[4])
+    elseif type == 'chain'  then body, shape = lp.newBody(world, 0, 0, (pcall(function() return _a[3].type end) or "dynamic")), lp.newChainShape(_a[1], unpack(_a[2])) end
+
 
     local obj = {}
         obj.world   = world
@@ -52,8 +53,8 @@ function World:__call(x,y,z)
 end
 
 function World:add_circle(x, y, r, settings) return _new_collider(self.box2d_world, 'circle', x, y, r, settings) end
-function World:add_rectangle(x, y, w, h, settings) return _new_collider(self.box2d_world, 'rectangle', x, y, w, h, settings) end
-function World:add_polygon(vertices, settings) return _new_collider(self.box2d_world, 'polygon', vertices, settings) end
+function World:add_rectangle(x, y, w, h, settings)  return _new_collider(self.box2d_world, 'rect', x, y, w, h, settings) end
+function World:add_polygon(vertices, settings) return _new_collider(self.box2d_world, 'poly', vertices, settings) end
 function World:add_line(x1, y1, x2, y2, settings) return _new_collider(self.box2d_world, 'line', x1, y1, x2, y2, settings) end
 function World:add_chain(vertices, loop, settings) return _new_collider(self.box2d_world, 'chain', vertices, loop, settings) end
 
