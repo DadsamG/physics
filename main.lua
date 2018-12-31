@@ -43,20 +43,16 @@ poly = world:add_polygon({200,200, 200, -30, -30,300, 300,300, 300,200})
 -------------------------------
 
 function love.update(dt)
-    if down("right") then ball.body:applyForce( 1000,     0) end
-    if down("left" ) then ball.body:applyForce(-1000,     0) end
-    if down("up"   ) then ball.body:applyForce(    0, -1000) end
-    if down("down" ) then ball.body:applyForce(    0,  1000) end
+    if down("right") then ball:applyForce( 1000,     0) end
+    if down("left" ) then ball:applyForce(-1000,     0) end
+    if down("up"   ) then ball:applyForce(    0, -1000) end
+    if down("down" ) then ball:applyForce(    0,  1000) end
 
     
     world:update(dt)
 end
 
 function love.draw()
-
     world:draw()
-
-
-
 end
 
