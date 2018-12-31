@@ -54,28 +54,9 @@ end
 
 function love.draw()
 
-    lg.circle("line", ball:getX(), ball:getY(), ball:getRadius())
-    lg.circle("line", ball2:getX(), ball2:getY(), ball2:getRadius())
-    lg.circle("line", ball3:getX(), ball3:getY(), ball3:getRadius())
-    lg.circle("line", ball4:getX(), ball4:getY(), ball4:getRadius())
-    lg.circle("line", ball5:getX(), ball5:getY(), ball5:getRadius())
-    lg.circle("line", ball6:getX(), ball6:getY(), ball6:getRadius())
+    world:draw()
 
 
-    lg.polygon("line", wall1:getWorldPoints(wall1:getPoints()))
-    lg.polygon("line", wall2:getWorldPoints(wall2:getPoints()))
-    lg.polygon("line", wall3:getWorldPoints(wall3:getPoints()))
-    lg.polygon("line", wall4:getWorldPoints(wall4:getPoints()))
-
-    lg.line(line:getWorldPoints(line:getPoints()))
-
-    local points = {chain:getWorldPoints(chain:getShape():getPoints())}    
-    for i = 1, #points, 2 do
-        if i < #points-2 then love.graphics.line(points[i], points[i+1], points[i+2], points[i+3]) end
-    end
-
-    lg.polygon("line", rect:getWorldPoints(rect:getPoints()))
-    lg.polygon("line", poly:getWorldPoints(poly:getPoints()))
 
 end
 
