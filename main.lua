@@ -27,16 +27,15 @@ wall2 = world:add_rectangle(400, 599, 800,   1, {type = "static"})
 wall3 = world:add_rectangle(1,   300,   1, 600, {type = "static"})
 wall4 = world:add_rectangle(799, 300,   1, 600, {type = "static"})
 
+rect  = world:add_rectangle(400, 400, 100, 200, {angle = 1})
 
-rect = world:add_rectangle(400, 400, 100, 200)
-
-line = world:add_line(50, 50, 500, 10)
+line  = world:add_line(50, 50, 500, 10)
 line:setRestitution(1)
 
 chain = world:add_chain(false,{50, 50, 100, 100, 100, 160})
 chain:setRestitution(1)
 
-poly = world:add_polygon({200,200, 200, -30, -30,300, 300,300, 300,200})
+poly  = world:add_polygon({200,200, 200, -30, -30,300, 300,300, 300,200})
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
