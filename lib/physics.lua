@@ -1,40 +1,35 @@
 local lp = love.physics
 local lg = love.graphics
-local t = type
 
 local function _set_funcs(obj1, obj2)  
     for k, v in pairs(obj2.__index) do
-        if k~="__gc" and k~="__eq" and k~="__index" and k~="__tostring" 
-            and k~="isDestroyed" and k~="testPoint" and k~="getType"       
-            and k~="setUserData" and k~="rayCast"   and k~="destroy"      
-            and k~="getUserData" and k~="release"   and k~="type" and k~="typeOf"
+        if k~="__gc" and k~="__eq" and k~="__index" and k~="__tostring" and k~="isDestroyed" and k~="testPoint" and k~="getType" and k~="setUserData" and k~="rayCast" and k~="destroy" and k~="getUserData" and k~="release" and k~="type" and k~="typeOf"
         then obj1[k] = function(obj1, ...) return v(obj2, ...) end end
     end
 end
 
-local function _new_collider(world, type, ...)
+
+local Collider = {}
+
+function Collider:new(world, type, ...)
     local _a, body, shape = {...}
     if     type == "circ"  then body, shape = lp.newBody(world, _a[1], _a[2], _a[4] and _a[4].type or "dynamic"), lp.newCircleShape(_a[3])
-    elseif type == "rect"  then body, shape = lp.newBody(world, _a[1], _a[2], _a[5] and _a[5].type or "dynamic"),lp.newRectangleShape(0, 0, _a[3], _a[4], _a[5] and _a[5].angle or 0)
+    elseif type == "rect"  then body, shape = lp.newBody(world, _a[1], _a[2], _a[5] and _a[5].type or "dynamic"), lp.newRectangleShape(0, 0, _a[3], _a[4], _a[5] and _a[5].angle or 0)
     elseif type == "poly"  then body, shape = lp.newBody(world,     0,     0, _a[2] and _a[2].type or "dynamic"), lp.newPolygonShape(unpack(_a[1]))
     elseif type == "line"  then body, shape = lp.newBody(world,     0,     0, _a[5] and _a[5].type or "dynamic"), lp.newEdgeShape(_a[1], _a[2], _a[3], _a[4])
     elseif type == "chain" then body, shape = lp.newBody(world,     0,     0, _a[3] and _a[3].type or "dynamic"), lp.newChainShape(_a[1], unpack(_a[2])) end
 
     local obj = {}
-        obj.world   = world
-        obj.body    = body
-        obj.shape   = shape
-        obj.fixture = lp.newFixture(body, shape)
-        obj.shapes   = {default = shape}
-        obj.fixtures = {default = fixture}
-
-        _set_funcs(obj, obj.body)
-        _set_funcs(obj, obj.shape)
-        _set_funcs(obj, obj.fixture)
-    return obj
-end   
-
-local Collider = {}
+        obj.world    = world
+        obj.body     = body
+        obj.shape    = shape
+        obj.fixture  = lp.newFixture(body, shape)
+        obj.shapes   = {default = obj.shape}
+        obj.fixtures = {default = obj.fixture}
+        obj.__index  = Collider
+        _set_funcs(obj, obj.body);_set_funcs(obj, obj.shape);_set_funcs(obj, obj.fixture)
+    return setmetatable(obj, obj)
+end
 
 function Collider:destroy()
     for k, v in pairs(self.fixtures) do v:setUserData(nil); v:destroy(); k[v] = nil end 
@@ -43,15 +38,13 @@ function Collider:destroy()
 end
 
 function Collider:add_shape(type, name, ...)
-    local _a, body, shape = {...}
-    if     type == "circ"  then body, shape = lp.newBody(self.world, _a[1], _a[2], (pcall(function() return _a[4].type end) or "dynamic")), lp.newCircleShape(_a[3])
-    elseif type == "rect"  then body, shape = lp.newBody(self.world,     0,     0, (pcall(function() return _a[5].type end) or "dynamic")), lp.newRectangleShape(_a[1], _a[2], _a[3], _a[4], _a[5])
-    elseif type == "poly"  then body, shape = lp.newBody(self.world,     0,     0, (pcall(function() return _a[2].type end) or "dynamic")), lp.newPolygonShape(unpack(_a[1]))
-    elseif type == "line"  then body, shape = lp.newBody(self.world,     0,     0, (pcall(function() return _a[5].type end) or "dynamic")), lp.newEdgeShape(_a[1], _a[2], _a[3], _a[4])
-    elseif type == "chain" then body, shape = lp.newBody(self.world,     0,     0, (pcall(function() return _a[3].type end) or "dynamic")), lp.newChainShape(_a[1], unpack(_a[2])) end
-
-    self.fixtures[name] = lp.newFixture(body, shape)
-    self.shapes[name] = shape
+    local _a, shape = {...}
+    if     type == "circle"    then shape = lp.newCircleShape(_a[1], _a[2], _a[3])
+    elseif type == "rectangle" then shape = lp.newRectangleShape(_a[1], _a[2], _a[3], _a[4], _a[5])
+    elseif type == "polygon"   then shape = lp.newPolygonShape(unpack(_a[1]))
+    elseif type == "line"      then shape = lp.newEdgeShape(_a[1], _a[2], _a[3], _a[4])
+    elseif type == "chain"     then shape = lp.newChainShape(_a[1], unpack(_a[2])) end
+    self.fixtures[name], self.shapes[name] = lp.newFixture(self.body, shape), shape
 end
 
 -------------------------------
@@ -76,23 +69,14 @@ function World:draw()
                 local points = {v1:getWorldPoints(v2:getShape():getPoints())}    
                 for i=1, #points, 2 do if i < #points-2 then lg.line(points[i], points[i+1], points[i+2], points[i+3]) end end
             end
-
         end
     end
 end
 
-function World:update(dt) end 
-
-function World:add_circle(x, y, r, args) return _new_collider(self.box2d_world, "circ", x, y, r, args) end
-function World:add_rectangle(x, y, w, h, args) return _new_collider(self.box2d_world, "rect", x, y, w, h, args) end
-function World:add_polygon(vertices, args) return _new_collider(self.box2d_world, "poly", vertices, args) end
-function World:add_line(x1, y1, x2, y2, args) return _new_collider(self.box2d_world, "line", x1, y1, x2, y2, args) end
-function World:add_chain(vertices, loop, args) return _new_collider(self.box2d_world, "chain", vertices, loop, args) end
+function World:add_circle(x, y, r, args) return Collider:new(self.box2d_world, "circ", x, y, r, args) end
+function World:add_rectangle(x, y, w, h, args) return Collider:new(self.box2d_world, "rect", x, y, w, h, args) end
+function World:add_polygon(vertices, args) return Collider:new(self.box2d_world, "poly", vertices, args) end
+function World:add_line(x1, y1, x2, y2, args) return Collider:new(self.box2d_world, "line", x1, y1, x2, y2, args) end
+function World:add_chain(vertices, loop, args) return Collider:new(self.box2d_world, "chain", vertices, loop, args) end
 
 return setmetatable({}, World)
-
-
--- local Collider = {}
-
--- function Collider:add_shape(shape) end
--- function Collider:destroy() end
