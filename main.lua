@@ -13,7 +13,6 @@ local world = World()
 --     function(a, b, coll, normalimpulse1, tangentimpulse1, normalimpulse2, tangentimpulse2, ...) end -- post
 -- )
 
-
 walls = world:add_chain(true, {1,1, 800,1, 800, 600, 1, 599})
 walls:setFriction(0)
 
@@ -29,7 +28,7 @@ for i = 1, 5 do
     end
 end
 
-pad = world:add_rectangle(500, 500, 100, 20)
+pad = world:add_rectangle(400, 500, 100, 20)
 pad:setRestitution(0)
 pad:setLinearDamping(100)
 pad:setFriction(0)
@@ -37,7 +36,7 @@ pad:setFixedRotation(true)
 
 lilnigga = world:add_rectangle(2,500, 10, 20, {type = "static"})
 
-joint = world:add_joint("prismatic", lilnigga, pad, 0,0, 200, 0, false )
+joint = world:add_joint("prismatic", pad, lilnigga, 400, 500, 1, 0, false )
 joint:setLimitsEnabled(false)
 
 -------------------------------
@@ -45,8 +44,8 @@ joint:setLimitsEnabled(false)
 -------------------------------
 
 function love.update(dt)
-    if down("right") then pad:applyForce( 500000,     0)  end
-    if down("left" ) then pad:applyForce(-500000,     0)  end
+    if down("right") then pad:applyForce( 500000,     500000)  end
+    if down("left" ) then pad:applyForce(-500000,     -500000)  end
     if down("space") then ball:applyForce(-5000,     -5000)  end
 
     world:update(dt)

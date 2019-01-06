@@ -11,10 +11,6 @@
 local phys=love.physics
 
 mlib = require('mlib/mlib')
--- NOTE for now use handy mlib functions, but maybe change later
--- they are a little overkill
--- ooh maybe take the chance to practice c and lua integration?
-
 
 local World = {}
 World.__index = World
@@ -29,10 +25,7 @@ function World:new(...)
    w.update = nil -- to use our custom update
    w.colliders = {}
 
-   -- some functions defined here to use w without being passed it
-
    function w.collide(obja, objb, coll_type, ...)
-      -- collision event for two Colliders
       local function run_coll(obj1, obj2, ...)
          if obj1[coll_type] ~= nil then
             local e = obj1[coll_type](obj1, obj2, ...)
@@ -104,13 +97,6 @@ function World:queryRectangleArea(x1, y1, x2, y2)
 end
 
 function World:queryPolygonArea(...)
-   -- query an area enclosed by the lines connecting a series of points
-   --[[
-      inputs:
-      (x, y, ) X 3+: floats, x and y coordinates of the points defining polygon
-      outputs:
-      colls: table, all Colliders intersecting the area
-   --]]
    local vertices = {...}
    if type(vertices[1]) == table then
       vertices = vertices[1]
