@@ -63,18 +63,21 @@ local World = {}
 function World:__call(xg,yg,sleep) 
     local obj = {}
         obj.box2d_world = lp.newWorld(xg,yg,sleep)
+        obj.colliders = {}
+        obj.joints = {}
         _set_funcs(obj, obj.box2d_world)
     return setmetatable(obj, {__index = World})
 end
 
 function World:draw() 
     -- Colliders --
+    local _r, _g, _b, _a = lg.getColor()
+    love.graphics.setColor(1, 1, 1)
     for k1,v1 in pairs(self:getBodies()) do for k2, v2 in pairs(v1:getFixtures()) do 
         if     v2:getShape():getType() == "circle"  then lg.circle("line", v1:getX(), v1:getY(), v2:getShape():getRadius())
         elseif v2:getShape():getType() == "polygon" then lg.polygon("line", v1:getWorldPoints(v2:getShape():getPoints()))
         else   local _p = {v1:getWorldPoints(v2:getShape():getPoints())}; for i=1, #_p, 2 do if i < #_p-2 then lg.line(_p[i], _p[i+1], _p[i+2], _p[i+3]) end end end
     end end
-
     -- Joints --
     love.graphics.setColor(1, 0.5, 0.25)
     for _, joint in ipairs(self.box2d_world:getJoints()) do
@@ -82,26 +85,26 @@ function World:draw()
         if x1 and y1 then love.graphics.circle('line', x1, y1, 6) end
         if x2 and y2 then love.graphics.circle('line', x2, y2, 6) end
     end
-    love.graphics.setColor(1, 1, 1)
+    love.graphics.setColor(_r, _g, _b, _a)
 end
 
-function World:add_circle(x, y, r, args) return Collider:new(self.box2d_world, "circ", x, y, r, args) end
-function World:add_rectangle(x, y, w, h, args) return Collider:new(self.box2d_world, "rect", x, y, w, h, args) end
-function World:add_polygon(vertices, args) return Collider:new(self.box2d_world, "poly", vertices, args) end
-function World:add_line(x1, y1, x2, y2, args) return Collider:new(self.box2d_world, "line", x1, y1, x2, y2, args) end
-function World:add_chain(vertices, loop, args) return Collider:new(self.box2d_world, "chain", vertices, loop, args) end
+function World:add_circle(x, y, r, args)       local _c = Collider:new(self.box2d_world, "circ", x, y, r, args)        ; table.insert(self.colliders, _c); return _c end
+function World:add_rectangle(x, y, w, h, args) local _c = Collider:new(self.box2d_world, "rect", x, y, w, h, args)     ; table.insert(self.colliders, _c); return _c end
+function World:add_polygon(vertices, args)     local _c = Collider:new(self.box2d_world, "poly", vertices, args)       ; table.insert(self.colliders, _c); return _c end
+function World:add_line(x1, y1, x2, y2, args)  local _c = Collider:new(self.box2d_world, "line", x1, y1, x2, y2, args) ; table.insert(self.colliders, _c); return _c end
+function World:add_chain(vertices, loop, args) local _c = Collider:new(self.box2d_world, "chain", vertices, loop, args); table.insert(self.colliders, _c); return _c end
 function World:add_joint(type, col1, col2, ...)
-    if     type == "distance"  then return lp.newDistanceJoint(col1.body, col2.body, ...)
-    elseif type == "friction"  then return lp.newFrictionJoint(col1.body, col2.body, ...)
-    elseif type == "gear"      then return lp.newGearJoint(col1.body, col2.body, ...)
-    elseif type == "motor"     then return lp.newMotorJoint(col1, col2, ...)
-    elseif type == "mouse"     then return lp.newMouseJoint(col1.body, col2.body, ...)
-    elseif type == "prismatic" then return lp.newPrismaticJoint(col1.body, col2.body, ...)
-    elseif type == "pulley"    then return lp.newPulleyJoint(col1.body, col2.body, ...)
-    elseif type == "revolute"  then return lp.newRevoluteJoint(col1.body, col2.body, ...)
-    elseif type == "rope"      then return lp.newRopeJoint(col1.body, col2.body, ...)
-    elseif type == "weld"      then return lp.newWeldJoint(col1.body, col2.body, ...)
-    elseif type == "wheel"     then return lp.newWheelJoint(col1.body, col2.body, ...) end
+    if     type == "distance"  then local _j = lp.newDistanceJoint(col1.body, col2.body, ...)  ;table.insert(self.joints, _j); return _j
+    elseif type == "friction"  then local _j = lp.newFrictionJoint(col1.body, col2.body, ...)  ;table.insert(self.joints, _j); return _j
+    elseif type == "gear"      then local _j = lp.newGearJoint(col1.body, col2.body, ...)      ;table.insert(self.joints, _j); return _j
+    elseif type == "motor"     then local _j = lp.newMotorJoint(col1, col2, ...)               ;table.insert(self.joints, _j); return _j
+    elseif type == "mouse"     then local _j = lp.newMouseJoint(col1.body, col2.body, ...)     ;table.insert(self.joints, _j); return _j
+    elseif type == "prismatic" then local _j = lp.newPrismaticJoint(col1.body, col2.body, ...) ;table.insert(self.joints, _j); return _j
+    elseif type == "pulley"    then local _j = lp.newPulleyJoint(col1.body, col2.body, ...)    ;table.insert(self.joints, _j); return _j
+    elseif type == "revolute"  then local _j = lp.newRevoluteJoint(col1.body, col2.body, ...)  ;table.insert(self.joints, _j); return _j
+    elseif type == "rope"      then local _j = lp.newRopeJoint(col1.body, col2.body, ...)      ;table.insert(self.joints, _j); return _j
+    elseif type == "weld"      then local _j = lp.newWeldJoint(col1.body, col2.body, ...)      ;table.insert(self.joints, _j); return _j
+    elseif type == "wheel"     then local _j = lp.newWheelJoint(col1.body, col2.body, ...)     ;table.insert(self.joints, _j); return _j end
 end
 
 return setmetatable({}, World)
