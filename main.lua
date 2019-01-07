@@ -19,6 +19,7 @@ walls:setFriction(0)
 ball = world:add_circle(400, 400, 20)
 ball:setRestitution(1)
 ball:setFriction(0)
+ball:add_shape("rectangle",_, 0, 0, 10, 100, 100)
 
 bricks = {ox = 10, oy = 10}
 for i = 1, 5 do
