@@ -35,9 +35,9 @@ pad:setLinearDamping(100)
 pad:setFriction(0)
 pad:setFixedRotation(true)
 
-lilnigga = world:add_rectangle(2,500, 10, 20, {type = "static"})
 
-joint = world:add_joint("prismatic", pad, lilnigga, 400, 500, 1, 0, false )
+
+joint = world:add_joint("prismatic", pad, world:add_rectangle(2,500, 10, 20, {type = "static"}), 400, 500, 1, 0, false )
 joint:setLimitsEnabled(false)
 
 -------------------------------

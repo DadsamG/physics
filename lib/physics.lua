@@ -44,14 +44,14 @@ function Collider:destroy()
     self.body:setUserData(nil); self.body:destroy(); self.body = nil
 end
 
-function Collider:add_shape(type, name, ...)
+function Collider:add_shape(shape_type, name, ...)
     local _n, _a, _s = name or _uuid(), {...}
-    if     type == "circle"    then _s = lp.newCircleShape(_a[1], _a[2], _a[3])
-    elseif type == "rectangle" then _s = lp.newRectangleShape(_a[1], _a[2], _a[3], _a[4], _a[5])
-    elseif type == "polygon"   then _s = lp.newPolygonShape(unpack(_a[1]))
-    elseif type == "line"      then _s = lp.newEdgeShape(_a[1], _a[2], _a[3], _a[4])
-    elseif type == "chain"     then _s = lp.newChainShape(_a[1], unpack(_a[2])) end
-    self.fixtures[_n],self.shapes[_n] = lp.newFixture(self.body, _s), _s
+    if     shape_type == "circle"    then _s = lp.newCircleShape(_a[1], _a[2], _a[3])
+    elseif shape_type == "rectangle" then _s = lp.newRectangleShape(_a[1], _a[2], _a[3], _a[4], _a[5])
+    elseif shape_type == "polygon"   then _s = lp.newPolygonShape(unpack(_a[1]))
+    elseif shape_type == "line"      then _s = lp.newEdgeShape(_a[1], _a[2], _a[3], _a[4])
+    elseif shape_type == "chain"     then _s = lp.newChainShape(_a[1], unpack(_a[2])) end
+    self.fixtures[_n], self.shapes[_n] = lp.newFixture(self.body, _s), _s
 end
 
 -------------------------------
@@ -72,20 +72,20 @@ end
 function World:draw() 
     -- Colliders --
     local _r, _g, _b, _a = lg.getColor()
-    love.graphics.setColor(1, 1, 1)
+    lg.setColor(1, 1, 1)
     for k1,v1 in pairs(self:getBodies()) do for k2, v2 in pairs(v1:getFixtures()) do 
         if     v2:getShape():getType() == "circle"  then lg.circle("line", v1:getX(), v1:getY(), v2:getShape():getRadius())
         elseif v2:getShape():getType() == "polygon" then lg.polygon("line", v1:getWorldPoints(v2:getShape():getPoints()))
         else   local _p = {v1:getWorldPoints(v2:getShape():getPoints())}; for i=1, #_p, 2 do if i < #_p-2 then lg.line(_p[i], _p[i+1], _p[i+2], _p[i+3]) end end end
     end end
     -- Joints --
-    love.graphics.setColor(1, 0.5, 0.25)
+    lg.setColor(1, 0.5, 0.25)
     for _, joint in ipairs(self.box2d_world:getJoints()) do
         local x1, y1, x2, y2 = joint:getAnchors()
         if x1 and y1 then love.graphics.circle('line', x1, y1, 6) end
         if x2 and y2 then love.graphics.circle('line', x2, y2, 6) end
     end
-    love.graphics.setColor(_r, _g, _b, _a)
+    lg.setColor(_r, _g, _b, _a)
 end
 
 function World:add_circle(x, y, r, args)       local _c = Collider:new(self.box2d_world, "circ", x, y, r, args)        ; table.insert(self.colliders, _c); return _c end

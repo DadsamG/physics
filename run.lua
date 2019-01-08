@@ -4,9 +4,9 @@ function love.run()
     lg.setLineStyle("rough")
     lg.setDefaultFilter("nearest", "nearest")
 
-    function pressed(key) return _INPUT.current_state[key] and not _INPUT.previous_state[key] end
+    function pressed(key)  return _INPUT.current_state[key] and not _INPUT.previous_state[key] end
     function released(key) return _INPUT.previous_state[key] and not _INPUT.current_state[key] end
-    function down(key) return love.keyboard.isDown(key) end   
+    function down(key)     return love.keyboard.isDown(key) end   
 
     return function()
         love.event.pump()
