@@ -26,3 +26,23 @@ function love.run()
         love.timer.sleep(0.001)
     end
 end
+
+-- function love.run()
+--     local dt, fixed_dt, acc = 0, 1/60, 0
+-- 	return function()
+--         -- EVENTS --
+--         love.event.pump() 
+--         for name,a,b,c,d,e,f in love.event.poll() do 
+--             if name == "quit" then if not love.quit or not love.quit() then return a or 0 end end
+--             love.handlers[name](a,b,c,d,e,f)
+--         end
+-- 		-- UPDATE --
+-- 		dt=love.timer.step()
+--         if dt > 0.2 then return end -- prevent screen grabbing
+--         acc=acc+dt
+--         while acc>=fixed_dt do love.update(fixed_dt); acc=acc-fixed_dt end
+--         -- DRAW --
+-- 		if lg.isActive() then lg.origin();lg.clear(lg.getBackgroundColor());if love.draw then love.draw() end;lg.present()end
+-- 		love.timer.sleep(0.001)
+--     end
+-- end

@@ -29,7 +29,7 @@ function Collider:new(world, collider_type, ...)
         obj.world    = _w
         obj.body     = _b
         obj.shape    = _s
-        obj.fixture  = lp.newFixture(_b, _s)
+        obj.fixture  = lp.newFixture(_b, _s, 1)
         obj.shapes   = {default = obj.shape}
         obj.fixtures = {default = obj.fixture}
         _set_funcs(obj, obj.body)
@@ -40,7 +40,7 @@ end
 
 function Collider:destroy()
     for k, v in pairs(self.fixtures) do v:setUserData(nil); v:destroy(); k[v] = nil end 
-    for k, v in pairs(self.shapes) do v:destroy(); k[v] = nil end 
+    for k, v in pairs(self.shapes)   do v:destroy(); k[v] = nil end 
     self.body:setUserData(nil); self.body:destroy(); self.body = nil
 end
 
@@ -51,7 +51,7 @@ function Collider:add_shape(shape_type, name, ...)
     elseif shape_type == "polygon"   then _s = lp.newPolygonShape(unpack(_a[1]))
     elseif shape_type == "line"      then _s = lp.newEdgeShape(_a[1], _a[2], _a[3], _a[4])
     elseif shape_type == "chain"     then _s = lp.newChainShape(_a[1], unpack(_a[2])) end
-    self.fixtures[_n], self.shapes[_n] = lp.newFixture(self.body, _s), _s
+    self.fixtures[_n], self.shapes[_n] = lp.newFixture(self.body, _s, 1), _s
 end
 
 -------------------------------
