@@ -38,12 +38,6 @@ function Collider:new(world, collider_type, ...)
     return setmetatable(obj, {__index = Collider})
 end
 
-function Collider:destroy()
-    for k, v in pairs(self.fixtures) do v:setUserData(nil); v:destroy(); k[v] = nil end 
-    for k, v in pairs(self.shapes)   do v:destroy(); k[v] = nil end 
-    self.body:setUserData(nil); self.body:destroy(); self.body = nil
-end
-
 function Collider:add_shape(shape_type, name, ...)
     local _n, _a, _s = name or _uuid(), {...}
     if     shape_type == "circle"    then _s = lp.newCircleShape(_a[1], _a[2], _a[3])
@@ -52,6 +46,19 @@ function Collider:add_shape(shape_type, name, ...)
     elseif shape_type == "line"      then _s = lp.newEdgeShape(_a[1], _a[2], _a[3], _a[4])
     elseif shape_type == "chain"     then _s = lp.newChainShape(_a[1], unpack(_a[2])) end
     self.fixtures[_n], self.shapes[_n] = lp.newFixture(self.body, _s, 1), _s
+end
+
+function Collider:remove_shape(name)
+    self.shapes[shape_name] = nil
+    self.fixtures[shape_name]:setUserData(nil)
+    self.fixtures[shape_name]:destroy()
+    self.fixtures[shape_name] = nil
+end
+
+function Collider:destroy()
+    for k, v in pairs(self.fixtures) do v:setUserData(nil); v:destroy(); k[v] = nil end 
+    for k, v in pairs(self.shapes)   do v:destroy(); k[v] = nil end 
+    self.body:setUserData(nil); self.body:destroy(); self.body = nil
 end
 
 -------------------------------

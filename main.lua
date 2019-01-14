@@ -45,9 +45,9 @@ joint:setLimitsEnabled(false)
 -------------------------------
 
 function love.update(dt)
-    if down("right") then pad:applyForce( 500000,     500000)  end
-    if down("left" ) then pad:applyForce(-500000,     -500000)  end
-    if down("space") then ball:applyForce(-5000,     -5000)  end
+    if down("right") then pad:applyForce( 500000,  500000) end
+    if down("left" ) then pad:applyForce(-500000,  -500000) end
+    if down("space") then ball:applyForce(-5000 ,  -5000)  end
 
     world:update(dt)
 end
