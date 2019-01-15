@@ -40,6 +40,7 @@ end
 
 function Collider:add_shape(shape_type, name, ...)
     local _n, _a, _s = name or _uuid(), {...}
+    if self.shapes[_n] then return end
     if     shape_type == "circle"    then _s = lp.newCircleShape(_a[1], _a[2], _a[3])
     elseif shape_type == "rectangle" then _s = lp.newRectangleShape(_a[1], _a[2], _a[3], _a[4], _a[5])
     elseif shape_type == "polygon"   then _s = lp.newPolygonShape(unpack(_a[1]))
@@ -49,10 +50,11 @@ function Collider:add_shape(shape_type, name, ...)
 end
 
 function Collider:remove_shape(name)
-    self.shapes[shape_name] = nil
-    self.fixtures[shape_name]:setUserData(nil)
-    self.fixtures[shape_name]:destroy()
-    self.fixtures[shape_name] = nil
+    if not self.shapes[name] then return end
+    self.shapes[name] = nil
+    self.fixtures[name]:setUserData(nil)
+    self.fixtures[name]:destroy()
+    self.fixtures[name] = nil
 end
 
 function Collider:destroy()
@@ -101,17 +103,17 @@ function World:add_polygon(vertices, args)     local _c = Collider:new(self.box2
 function World:add_line(x1, y1, x2, y2, args)  local _c = Collider:new(self.box2d_world, "line", x1, y1, x2, y2, args) ; table.insert(self.colliders, _c); return _c end
 function World:add_chain(vertices, loop, args) local _c = Collider:new(self.box2d_world, "chain", vertices, loop, args); table.insert(self.colliders, _c); return _c end
 function World:add_joint(type, col1, col2, ...)
-    if     type == "distance"  then local _j = lp.newDistanceJoint(col1.body, col2.body, ...)  ;table.insert(self.joints, _j); return _j
-    elseif type == "friction"  then local _j = lp.newFrictionJoint(col1.body, col2.body, ...)  ;table.insert(self.joints, _j); return _j
-    elseif type == "gear"      then local _j = lp.newGearJoint(col1.body, col2.body, ...)      ;table.insert(self.joints, _j); return _j
-    elseif type == "motor"     then local _j = lp.newMotorJoint(col1, col2, ...)               ;table.insert(self.joints, _j); return _j
-    elseif type == "mouse"     then local _j = lp.newMouseJoint(col1.body, col2.body, ...)     ;table.insert(self.joints, _j); return _j
-    elseif type == "prismatic" then local _j = lp.newPrismaticJoint(col1.body, col2.body, ...) ;table.insert(self.joints, _j); return _j
-    elseif type == "pulley"    then local _j = lp.newPulleyJoint(col1.body, col2.body, ...)    ;table.insert(self.joints, _j); return _j
-    elseif type == "revolute"  then local _j = lp.newRevoluteJoint(col1.body, col2.body, ...)  ;table.insert(self.joints, _j); return _j
-    elseif type == "rope"      then local _j = lp.newRopeJoint(col1.body, col2.body, ...)      ;table.insert(self.joints, _j); return _j
-    elseif type == "weld"      then local _j = lp.newWeldJoint(col1.body, col2.body, ...)      ;table.insert(self.joints, _j); return _j
-    elseif type == "wheel"     then local _j = lp.newWheelJoint(col1.body, col2.body, ...)     ;table.insert(self.joints, _j); return _j end
+    if     type == "distance"  then local _j = lp.newDistanceJoint(col1.body, col2.body, ...) ; table.insert(self.joints, _j); return _j
+    elseif type == "friction"  then local _j = lp.newFrictionJoint(col1.body, col2.body, ...) ; table.insert(self.joints, _j); return _j
+    elseif type == "gear"      then local _j = lp.newGearJoint(col1.body, col2.body, ...)     ; table.insert(self.joints, _j); return _j
+    elseif type == "motor"     then local _j = lp.newMotorJoint(col1, col2, ...)              ; table.insert(self.joints, _j); return _j
+    elseif type == "mouse"     then local _j = lp.newMouseJoint(col1.body, col2.body, ...)    ; table.insert(self.joints, _j); return _j
+    elseif type == "prismatic" then local _j = lp.newPrismaticJoint(col1.body, col2.body, ...); table.insert(self.joints, _j); return _j
+    elseif type == "pulley"    then local _j = lp.newPulleyJoint(col1.body, col2.body, ...)   ; table.insert(self.joints, _j); return _j
+    elseif type == "revolute"  then local _j = lp.newRevoluteJoint(col1.body, col2.body, ...) ; table.insert(self.joints, _j); return _j
+    elseif type == "rope"      then local _j = lp.newRopeJoint(col1.body, col2.body, ...)     ; table.insert(self.joints, _j); return _j
+    elseif type == "weld"      then local _j = lp.newWeldJoint(col1.body, col2.body, ...)     ; table.insert(self.joints, _j); return _j
+    elseif type == "wheel"     then local _j = lp.newWheelJoint(col1.body, col2.body, ...)    ; table.insert(self.joints, _j); return _j end
 end
 
 return setmetatable({}, World)

@@ -19,7 +19,7 @@ walls:setFriction(0)
 ball = world:add_circle(400, 400, 20)
 ball:setRestitution(1)
 ball:setFriction(0)
-ball:add_shape("rectangle",_, 0, 0, 10, 100, 100)
+ball:add_shape("rectangle", "fug", 0, 0, 10, 100, 100)
 
 bricks = {ox = 10, oy = 10}
 for i = 1, 5 do
@@ -48,6 +48,8 @@ function love.update(dt)
     if down("right") then pad:applyForce( 500000,  500000) end
     if down("left" ) then pad:applyForce(-500000,  -500000) end
     if down("space") then ball:applyForce(-5000 ,  -5000)  end
+
+    if pressed("down") then ball:remove_shape("fug") end
 
     world:update(dt)
 end
