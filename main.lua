@@ -51,6 +51,13 @@ function love.update(dt)
 
     if pressed("down") then ball:remove_shape("fug") end
 
+    for k,v in pairs(world:getContacts()) do 
+        local fix1, fix2 = v:getFixtures()
+        local body1, body2 = fix1:getBody(), fix2:getBody()
+        local collider1, collider2 = body1:getUserData(), body2:getUserData() --<= TODO 
+        print(collider1.name)
+    end
+
     world:update(dt)
 end
 

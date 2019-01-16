@@ -32,9 +32,12 @@ function Collider:new(world, collider_type, ...)
         obj.fixture  = lp.newFixture(_b, _s, 1)
         obj.shapes   = {default = obj.shape}
         obj.fixtures = {default = obj.fixture}
+    
         _set_funcs(obj, obj.body)
         _set_funcs(obj, obj.shape)
         _set_funcs(obj, obj.fixture)
+
+        obj.body:setUserData(obj)
     return setmetatable(obj, {__index = Collider})
 end
 
