@@ -26,7 +26,6 @@ local world = World(0, 0)
 world:add_chain("walls", true, {1,1, 800,1, 800, 600, 1, 599}, "static")
 world:get_c("walls"):setFriction(0)
 
-print(world:is_collider("walls"))
 
 world:add_circle("ball", 400, 400, 20)
 world:get_c("ball"):setRestitution(1)
