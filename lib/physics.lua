@@ -21,19 +21,16 @@ local function _set_funcs(obj1, obj2) for k, v in pairs(obj2.__index) do if
     k~="typeOf" 
     then obj1[k] = function(obj1, ...) return v(obj2, ...) end end end 
 end
-
 local function _uuid() local fn = function(x) local r = math.random(16) - 1; r=(x=="x")and(r+1)or(r%4)+9; return ("0123456789ABCDEF"):sub(r, r) end; return (("xxxxxxxx"):gsub("[x]", fn)) end
-
 local function _run_col(fix1, fix2, coll_type, ...)
     local body1, body2   = fix1:getBody()     , fix2:getBody()
     local coll1, coll2   = body1:getUserData(), body2:getUserData()
     local shape1, shape2 = fix1:getUserData() , fix2:getUserData()
-    shape1[coll_type](coll2, shape2, ...)
-    shape2[coll_type](coll1, shape1, ...)
-    coll1[coll_type](coll2, shape2, ...)
-    coll2[coll_type](coll1, shape1, ...)
+    shape1[coll_type](coll2, shape2, coll1, shape1, ...)
+    shape2[coll_type](coll1, shape1, coll2, shape2, ...)
+    coll1[coll_type](coll2, shape2, coll1, shape1, ...)
+    coll2[coll_type](coll1, shape1, coll2, shape2, ...)
 end
-
 local function _enter(a,b)      return _run_col(a, b, '_enter'    ) end
 local function _exit(a, b)      return _run_col(a, b, '_exit'     ) end
 local function _pre(a, b)       return _run_col(a, b, '_pre'      ) end
@@ -114,11 +111,13 @@ function World:add_polygon(tag, vertices, move_type)        return self:add_coll
 function World:add_line(tag, x1, y1, x2, y2, move_type)     return self:add_collider(tag, "line"     , x1, y1, x2, y2, move_type) end
 function World:add_chain(tag, loop, vertices, move_type)    return self:add_collider(tag, "chain"    , loop, vertices, move_type) end
 
-function World:get_collider(tag) return self.colliders[tag]        end
-function World:get_c(tag)        return self.colliders[tag]        end
-function World:is_collider(tag)  return self.colliders[tag] ~= nil end
+function World:get_collider(tag)              return self.colliders[tag]                        end
+function World:get_c(tag)                     return self.colliders[tag]                        end
+function World:get_shape(coll_tag, shape_tag) return self.colliders[coll_tag].shapes[shape_tag] end
+function World:get_s(coll_tag, shape_tag)     return self.colliders[coll_tag].shapes[shape_tag] end
+function World:is_collider(tag)               return self.colliders[tag] ~= nil                 end
 
-function World:remove_collider(tag) if not self.colliders[tag] then print("Collider: " .. tag .. " doesn't exist.") return end self.colliders[tag]:destroy() end
+function World:remove_collider(tag) if not self.colliders[tag] then print("Collider: " .. tag .. " doesn't exist.") else self.colliders[tag]:destroy() end return self end
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
@@ -151,6 +150,7 @@ function World:remove_joint(tag)
     self.joints[tag]:setUserData(nil)
     self.joints[tag]:destroy()
     self.joints[tag] = nil
+    return self
 end
 
 -------------------------------
@@ -167,6 +167,7 @@ function Collider:add_shape(tag, shape_type, ...)
     elseif _st == "chain"     then _shape = lp.newChainShape(_a[1], unpack(_a[2])) end
     self.shapes[_tag] = setmetatable({   
         tag     = _tag, 
+        collider = self
         shape   = _shape, 
         fixture = lp.newFixture(self.body, _shape, 1),
         _enter  = function() end,
@@ -191,16 +192,12 @@ function Collider:get_shape(tag) return self.shapes[tag]        end
 function Collider:get_s(tag)     return self.shapes[tag]        end
 function Collider:is_shape(tag)  return self.shapes[tag] ~= nil end
 
-function Collider:remove_shape(tag)
-    if not self.shapes[tag] then print("Shape: " .. tag .. " doesn't exist.") return end
-    self.shapes[tag].fixture:setUserData(nil); self.shapes[tag].fixture:destroy()
-    self.shapes[tag] = nil
-end
+function Collider:remove_shape(tag) if not self.shapes[tag] then print("Shape: " .. tag .. " doesn't exist.") else self.colliders[tag]:destroy() end return self end
 
-function Collider:set_enter(func) if type(func) ~= "function" then print("set_enter is not a function.") return end self._enter = func end
-function Collider:set_exit(func)  if type(func) ~= "function" then print("set_exit is not a function.")  return end self._exit  = func end
-function Collider:set_pre(func)   if type(func) ~= "function" then print("set_pre is not a function.")   return end self._pre   = func end
-function Collider:set_post(func)  if type(func) ~= "function" then print("set_post is not a function.")  return end self._post  = func end
+function Collider:set_enter(func) if type(func) ~= "function" then print("set_enter is not a function.") else self._enter = func end return self end
+function Collider:set_exit(func)  if type(func) ~= "function" then print("set_exit is not a function.")  else self._exit  = func end return self end
+function Collider:set_pre(func)   if type(func) ~= "function" then print("set_pre is not a function.")   else self._pre   = func end return self end
+function Collider:set_post(func)  if type(func) ~= "function" then print("set_post is not a function.")  else self._post  = func end return self end
 
 function Collider:destroy()
     if self.body:isDestroyed() then print("Collider: " .. self.tag .. " already destroyed.") return end
@@ -215,10 +212,17 @@ end
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
 
-function Shape:set_enter(func) if type(func) ~= "function" then print("set_enter is not a function.") return end self._enter = func end
-function Shape:set_exit(func)  if type(func) ~= "function" then print("set_exit is not a function.")  return end self._exit  = func end
-function Shape:set_pre(func)   if type(func) ~= "function" then print("set_pre is not a function.")   return end self._pre   = func end
-function Shape:set_post(func)  if type(func) ~= "function" then print("set_post is not a function.")  return end self._post  = func end
+function Shape:set_enter(func) if type(func) ~= "function" then print("set_enter is not a function.") else self._enter = func end return self end
+function Shape:set_exit(func)  if type(func) ~= "function" then print("set_exit is not a function.")  else self._exit  = func end return self end
+function Shape:set_pre(func)   if type(func) ~= "function" then print("set_pre is not a function.")   else self._pre   = func end return self end
+function Shape:set_post(func)  if type(func) ~= "function" then print("set_post is not a function.")  else self._post  = func end return self end
+
+function Shape:destroy()
+    if self.fixture:isDestroyed() then print("Shape: " .. self.tag .. " already destroyed.") return end 
+    self.fixture:setUserData(nil); self.fixture:destroy()
+    self._enter, self._exit, self._pre, self._post = function() end, function() end, function() end, function() end
+    self.collider.shapes[self.tag] = nil
+end
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
