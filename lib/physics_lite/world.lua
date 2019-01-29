@@ -67,20 +67,6 @@ end
 
 
 
--- alpha: sets the alpha of the drawing, defaults to 1
--- draw_over: draws the collision objects shapes even if their .draw method is overwritten
-function World:draw(alpha, draw_over)
-   for _, c in pairs(self.colliders) do
-      love.graphics.setColor(1, 1, 1, alpha or 1)
-      c:draw(alpha)
-      if draw_over then
-	 love.graphics.setColor(1, 1, 1, alpha or 1)
-	 c:__draw__()
-      end
-   end
-end
-
-
 
 
 -- query a bounding-box aligned area for colliders
@@ -143,9 +129,7 @@ function World:queryCircleArea(x, y, r)
    return checkIntersections(colls, 'Circle', x, y, r)
 end
 
-
 -- a helper for getting intersections from mlib
-
 function checkIntersections(colls, intersection_type, ...)
    -- iterate through a table to see if they intersect
    local function get_mlib_intersection(collider, type_2, ...)
@@ -178,8 +162,6 @@ function checkIntersections(colls, intersection_type, ...)
    end
    return colls
 end
-
----------------------------------------------------
 
 
 return World

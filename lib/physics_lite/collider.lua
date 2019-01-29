@@ -46,26 +46,6 @@ function Collider.new(world, collider_type, ...)
    return o
 end
 
-function Collider:__draw__()
-   local mode = 'line'
-   love.graphics[self.collider_type:lower()](mode, self:getSpatialIdentity())
-end
-
-function Collider:draw()
-   self:__draw__()
-end
-
-
-function Collider:destroy()
-   self._world.colliders[self] = nil
-   self.fixture:setUserData(nil)
-   self.fixture:destroy()
-   self.body:destroy()
-   -- for k, v in pairs(self) do
-   --    self[k] = nil
-   -- end
-end
-
 function Collider:getSpatialIdentity() -- define this for circle
    if self.collider_type == 'Circle' then
       return self:getX(), self:getY(), self:getRadius()
