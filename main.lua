@@ -39,4 +39,3 @@ end
 function love.draw()
    world:draw()
 end
-
