@@ -26,15 +26,15 @@ local function _callback(fix1, fix2, contact, coll_type, ...)
     local body1, body2   = fix1:getBody()     , fix2:getBody()
     local coll1, coll2   = body1:getUserData(), body2:getUserData()
     local shape1, shape2 = fix1:getUserData() , fix2:getUserData()
-    shape1[coll_type](coll2, shape2, coll1, shape1, contact, ...)
-    shape2[coll_type](coll1, shape1, coll2, shape2, contact, ...)
-    coll1[coll_type](coll2, shape2, coll1, shape1, contact, ...)
-    coll2[coll_type](coll1, shape1, coll2, shape2, contact, ...)
+    shape1[coll_type](coll1, shape1, coll2, shape2, contact, ...)
+    shape2[coll_type](coll2, shape2, coll1, shape1, contact, ...)
+    coll1[coll_type](coll1, shape1, coll2, shape2, contact, ...)
+    coll2[coll_type](coll2, shape2, coll1, shape1, contact, ...)
 end
-local function _enter(fix1, fix2, contact)     return _callback(fix1, fix2, contact,'_enter'    ) end
-local function _exit(fix1, fix2, contact)      return _callback(fix1, fix2, contact,'_exit'     ) end
-local function _pre(fix1, fix2, contact)       return _callback(fix1, fix2, contact,'_pre'      ) end
-local function _post(fix1, fix2, contact, ...) return _callback(fix1, fix2, contact,'_post', ...) end -- ... => normal_impulse1, tangent_impulse1, normal_impulse2, tangent_impulse2
+local function _enter(fix1, fix2, contact)     return _callback(fix1, fix2, contact,"_enter")     end
+local function _exit(fix1, fix2, contact)      return _callback(fix1, fix2, contact,"_exit")      end
+local function _pre(fix1, fix2, contact)       return _callback(fix1, fix2, contact,"_pre")       end
+local function _post(fix1, fix2, contact, ...) return _callback(fix1, fix2, contact,"_post", ...) end -- ... => normal_impulse1, tangent_impulse1, normal_impulse2, tangent_impulse2
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
