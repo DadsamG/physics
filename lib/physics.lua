@@ -21,15 +21,15 @@ local function _set_funcs(obj1, obj2) for k, v in pairs(obj2.__index) do if
     k~="typeOf" 
     then obj1[k] = function(obj1, ...) return v(obj2, ...) end end end 
 end
-local function _uuid() local fn = function(x) local r = math.random(16) - 1; r=(x=="x")and(r+1)or(r%4)+9; return ("0123456789ABCDEF"):sub(r, r) end; return (("xxxxxxxx"):gsub("[x]", fn)) end
+local _uuid = (function() local _ids = {} return function() local func = function() local r = math.random(16) return ("0123456789ABCDEF"):sub(r, r) end local result = (("xxxxxxxx"):gsub("[x]", func)) while _ids[result] do result = (("xxxxxxxx"):gsub("[x]", func)) end _ids[result] = result return result end end)()
 local function _callback(fix1, fix2, contact, coll_type, ...)
     local body1, body2   = fix1:getBody()     , fix2:getBody()
     local coll1, coll2   = body1:getUserData(), body2:getUserData()
     local shape1, shape2 = fix1:getUserData() , fix2:getUserData()
-    shape1[coll_type](coll1, shape1, coll2, shape2, contact, ...)
-    shape2[coll_type](coll2, shape2, coll1, shape1, contact, ...)
-    coll1[coll_type](coll1, shape1, coll2, shape2, contact, ...)
-    coll2[coll_type](coll2, shape2, coll1, shape1, contact, ...)
+    if shape1 then shape1[coll_type](coll1, shape1, coll2, shape2, contact, ...) end
+    if shape2 then shape2[coll_type](coll2, shape2, coll1, shape1, contact, ...) end
+    if coll1  then coll1[coll_type](coll1, shape1, coll2, shape2, contact, ...)  end
+    if coll2  then coll2[coll_type](coll2, shape2, coll1, shape1, contact, ...)  end
 end
 local function _enter(fix1, fix2, contact)     return _callback(fix1, fix2, contact,"_enter")     end
 local function _exit(fix1, fix2, contact)      return _callback(fix1, fix2, contact,"_exit")      end
@@ -39,6 +39,10 @@ local function _post(fix1, fix2, contact, ...) return _callback(fix1, fix2, cont
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
+
+--todo add_sensor
+--todo set_class
+--todo récupérer toutes les entitées appartenant à une certaine classe
 
 function World:__call(xg,yg,sleep)
     local obj = {}
@@ -71,7 +75,7 @@ end
 
 function World:add_collider(tag, collider_type, ...)
     local _w, _tag, _ct, _a, _b, _s, _collider = self.box2d_world, tag or uuid(), collider_type, {...}, nil, nil, setmetatable({}, {__index = Collider})
-    if self.colliders[_tag] then print("Collider called " .. _tag .. " already exist.") while self.colliders[_tag] do _tag = uuid() end end
+    if self.colliders[_tag] then print("Collider called " .. _tag .. " already exist."); _tag = uuid() end
     if     _ct == "circle"    then _b, _s = lp.newBody(_w, _a[1], _a[2], _a[4] or "dynamic"), lp.newCircleShape(_a[3])
     elseif _ct == "rectangle" then _b, _s = lp.newBody(_w, _a[1], _a[2], _a[6] or "dynamic"), lp.newRectangleShape(0, 0, _a[3], _a[4], _a[5] or 0)
     elseif _ct == "polygon"   then _b, _s = lp.newBody(_w,     0,     0, _a[2] or "dynamic"), lp.newPolygonShape(unpack(_a[1]))
@@ -125,7 +129,7 @@ function World:remove_collider(tag) if not self.colliders[tag] then print("Colli
 
 function World:add_joint(tag, joint_type, col1, col2, ...)
     local _tag, _jt, _joint = tag or _uuid(), joint_type, nil
-    if self.joints[_tag] then print("Joint: " .. _tag .. " already exist.") while self.joints[_tag] do _tag = uuid() end end
+    if self.joints[_tag] then print("Joint: " .. _tag .. " already exist."); _tag = uuid() end
     if     _jt == "distance"  then _joint = lp.newDistanceJoint(col1.body, col2.body, ...)
     elseif _jt == "friction"  then _joint = lp.newFrictionJoint(col1.body, col2.body, ...)
     elseif _jt == "gear"      then _joint = lp.newGearJoint(col1.body, col2.body, ...)    
@@ -159,7 +163,7 @@ end
 
 function Collider:add_shape(tag, shape_type, ...)
     local _tag, _st,  _a, _shape = tag or _uuid(), shape_type, {...}, nil
-    if self.shapes[_tag] then print("Shape: " .. _tag .. " already exist.") while self.shapes[_tag] do _tag = uuid() end end
+    if self.shapes[_tag] then print("Shape: " .. _tag .. " already exist."); _tag = uuid() end
     if     _st == "circle"    then _shape = lp.newCircleShape(_a[1], _a[2], _a[3])
     elseif _st == "rectangle" then _shape = lp.newRectangleShape(_a[1], _a[2], _a[3], _a[4], _a[5])
     elseif _st == "polygon"   then _shape = lp.newPolygonShape(unpack(_a[1]))
@@ -192,7 +196,7 @@ function Collider:get_shape(tag) return self.shapes[tag]        end
 function Collider:get_s(tag)     return self.shapes[tag]        end
 function Collider:is_shape(tag)  return self.shapes[tag] ~= nil end
 
-function Collider:remove_shape(tag) if not self.shapes[tag] then print("Shape: " .. tag .. " doesn't exist.") else self.colliders[tag]:destroy() end return self end
+function Collider:remove_shape(tag) if not self.shapes[tag] then print("Shape: " .. tag .. " doesn't exist.") else self.shapes[tag]:destroy() end return self end
 
 function Collider:set_enter(func) if type(func) ~= "function" then print("set_enter is not a function.") else self._enter = func end return self end
 function Collider:set_exit(func)  if type(func) ~= "function" then print("set_exit is not a function.")  else self._exit  = func end return self end
