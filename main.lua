@@ -13,7 +13,7 @@ world:get_c("walls").class = "walls"
 
 world:add_circle("ball", 400, 400, 20)
 world:get_c("ball"):setFriction(1)
-world:get_c("ball"):add_rectangle("rect", 0, 0, 10, 100, 0)--:setSensor(true)
+world:get_c("ball"):add_rectangle("rect", 0, 0, 10, 100, 0):setSensor(true)
 world:get_c("ball"):setFriction(1)
 
 world:add_rectangle(_, 100, 100, 200, 200)
@@ -35,7 +35,7 @@ function love.update(dt)
     if down("right") then pcall(function() world:get_c("ball"):applyForce(1000, 0)  end) end
     if down("left")  then pcall(function() world:get_c("ball"):applyForce(-1000, 0) end) end
     if pressed("1")  then pcall(function() world:get_c("ball"):remove_shape("rect")  end) end
-    --if pressed("2")  then pcall(function() world:get_c("ball"):destroy()            end) end
+    if pressed("2")  then pcall(function() world:get_c("ball"):destroy()            end) end
     if pressed("3")  then  end
     if pressed("4")  then  end
     if pressed("5")  then  end
