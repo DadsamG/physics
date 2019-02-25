@@ -3,24 +3,8 @@ local World, Collider, Shape, lp, lg = {}, {}, {}, love.physics, love.graphics
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
-
-local function _set_funcs(obj1, obj2) for k, v in pairs(obj2.__index) do if
-    k~="__gc"        and 
-    k~="__eq"        and 
-    k~="__index"     and 
-    k~="__tostring"  and 
-    k~="isDestroyed" and 
-    k~="testPoint"   and 
-    k~="getType"     and
-    k~="rayCast"     and 
-    k~="destroy"     and 
-    k~="setUserData" and
-    k~="getUserData" and
-    k~="release"     and 
-    k~="type"        and 
-    k~="typeOf" 
-    then obj1[k] = function(obj1, ...) return v(obj2, ...) end end end 
-end
+local _funcs = {__gc=0,__eq=0,__index=0,__tostring=0,isDestroyed=0,testPoint=0,getType=0,raycast=0,destroy=0,setUserData=0,getUserData=0,release=0,type=0,typeOf=0}
+local function _set_funcs(obj1, obj2) for k, v in pairs(obj2.__index) do if not _funcs[k] then obj1[k] = function(obj1, ...) return v(obj2, ...) end end end end
 local _uuid = (function() local _ids = {} return function() local func = function() local r = math.random(16) return ("0123456789ABCDEF"):sub(r, r) end local result = (("xxxxxxxx"):gsub("[x]", func)) while _ids[result] do result = (("xxxxxxxx"):gsub("[x]", func)) end _ids[result] = result return result end end)()
 local function _callback(fix1, fix2, contact, coll_type, ...)
     local body1, body2   = fix1:getBody()     , fix2:getBody()
