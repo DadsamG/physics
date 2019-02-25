@@ -6,8 +6,7 @@ local World, Collider, Shape, lp, lg = {}, {}, {}, love.physics, love.graphics
 
 local _funcs = {__gc=0,__eq=0,__index=0,__tostring=0,isDestroyed=0,testPoint=0,getType=0,raycast=0,destroy=0,setUserData=0,getUserData=0,release=0,type=0,typeOf=0}
 local function _set_funcs(obj1, obj2) for k, v in pairs(obj2.__index) do if not _funcs[k] then obj1[k] = function(obj1, ...) return v(obj2, ...) end end end end
-
-local _uuid = (function() local _ids = {} return function() local func = function() local r = math.random(16) return ("0123456789ABCDEF"):sub(r, r) end local result = (("xxxxxxxx"):gsub("[x]", func)) while _ids[result] do result = (("xxxxxxxx"):gsub("[x]", func)) end _ids[result] = result return result end end)()
+local function _uuid() local fn = function() local r = math.random(16) return ("0123456789ABCDEF"):sub(r, r) end return ("xxxxxxxxxxxxxxxx"):gsub("[x]", fn) end
 local function _callback(fix1, fix2, contact, callback, ...)
     local body1, body2   = fix1:getBody()     , fix2:getBody()
     local col1, col2     = body1:getUserData(), body2:getUserData()
@@ -26,17 +25,16 @@ local function _post(fix1, fix2, contact, ...) return _callback(fix1, fix2, cont
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
 
---todo set_class
 --todo récupérer toutes les entitées appartenant à une certaine classe
 --todo remplacer get/setUserdata par des .collider / .world  ?
 
 function World:__call(xg,yg,sleep)
     local obj = {}
-        obj.box2d_world = lp.newWorld(xg,yg,sleep)
-        obj.box2d_world:setCallbacks(_enter, _exit, _pre, _post)
-        obj.colliders   = {}
-        obj.joints      = {}
-        _set_funcs(obj, obj.box2d_world)
+        obj._b2d = lp.newWorld(xg,yg,sleep)
+        obj._b2d:setCallbacks(_enter, _exit, _pre, _post)
+        obj._colliders = {}
+        obj._joints    = {}
+        _set_funcs(obj, obj._b2d)
     return setmetatable(obj, {__index = World})
 end
 
@@ -51,7 +49,7 @@ function World:draw()
     end end
     -- Joints --
     lg.setColor(1, 0.5, 0.25)
-    for _, joint in ipairs(self.box2d_world:getJoints()) do
+    for _, joint in ipairs(self._b2d:getJoints()) do
         local x1, y1, x2, y2 = joint:getAnchors()
         if x1 and y1 then lg.circle('line', x1, y1, 6) end
         if x2 and y2 then lg.circle('line', x2, y2, 6) end
@@ -60,54 +58,49 @@ function World:draw()
 end
 
 function World:add_collider(tag, collider_type, ...)
-    local _w, _tag, _ct, _a, _b, _s, _collider = self.box2d_world, tag or uuid(), collider_type, {...}, nil, nil, setmetatable({}, {__index = Collider})
-    if self.colliders[_tag] then print("Collider called " .. _tag .. " already exist."); _tag = uuid() end
+    local _w, _tag, _ct, _a, _b, _s, _collider = self._b2d, tag or uuid(), collider_type, {...}, nil, nil, setmetatable({}, {__index = Collider})
+    if self._colliders[_tag] then print("Collider called " .. _tag .. " already exist."); _tag = uuid() end
     if     _ct == "circle"    then _b, _s = lp.newBody(_w, _a[1], _a[2], _a[4] or "dynamic"), lp.newCircleShape(_a[3])
     elseif _ct == "rectangle" then _b, _s = lp.newBody(_w, _a[1], _a[2], _a[6] or "dynamic"), lp.newRectangleShape(0, 0, _a[3], _a[4], _a[5] or 0)
     elseif _ct == "polygon"   then _b, _s = lp.newBody(_w,     0,     0, _a[2] or "dynamic"), lp.newPolygonShape(unpack(_a[1]))
     elseif _ct == "line"      then _b, _s = lp.newBody(_w,     0,     0, _a[5] or "static" ), lp.newEdgeShape(_a[1], _a[2], _a[3], _a[4])
     elseif _ct == "chain"     then _b, _s = lp.newBody(_w,     0,     0, _a[3] or "static" ), lp.newChainShape(_a[1], unpack(_a[2]))  end
-    _collider.world  = self
-    _collider.tag    = _tag
-    _collider.body   = _b
-    _collider.shapes = {}
-    _collider.shapes["main"] = setmetatable({   
-        tag     = "main", 
-        shape   = _s, 
-        fixture = lp.newFixture(_b, _s, 1),
-        _enter  = function() end,
-        _exit   = function() end,
-        _pre    = function() end,
-        _post   = function() end  
-    }, {__index = Shape})
+    _collider._world  = self
+    _collider._tag    = _tag
+    _collider._body   = _b
+    _collider._shapes = {
+        main = setmetatable({   
+            _tag     = "main", 
+            _shape   = _s, 
+            _fixture = lp.newFixture(_b, _s, 1),
+            _enter  = function() end,
+            _exit   = function() end,
+            _pre    = function() end,
+            _post   = function() end  
+        }, {__index = Shape})
+    }
     _collider._enter = function() end 
     _collider._exit  = function() end
     _collider._pre   = function() end 
     _collider._post  = function() end 
-    _set_funcs(_collider, _collider.body)
-    _set_funcs(_collider, _collider.shapes["main"].shape)
-    _set_funcs(_collider, _collider.shapes["main"].fixture)
-    _set_funcs(_collider.shapes["main"], _collider.shapes["main"].shape)
-    _set_funcs(_collider.shapes["main"], _collider.shapes["main"].fixture)
-    _collider.body:setUserData(_collider)
-    _collider.shapes["main"].fixture:setUserData(_collider.shapes["main"])
-    self.colliders[_tag] = _collider 
+    _set_funcs(_collider, _collider._body)
+    _set_funcs(_collider, _collider._shapes["main"]._shape)
+    _set_funcs(_collider, _collider._shapes["main"]._fixture)
+    _set_funcs(_collider._shapes["main"], _collider._shapes["main"]._shape)
+    _set_funcs(_collider._shapes["main"], _collider._shapes["main"]._fixture)
+    _collider._body:setUserData(_collider)
+    _collider._shapes["main"]._fixture:setUserData(_collider._shapes["main"])
+    self._colliders[_tag] = _collider 
     return _collider
 end
-
 function World:add_circle(tag, x, y, r, move_type)          return self:add_collider(tag, "circle"   , x, y, r, move_type)        end
 function World:add_rectangle(tag, x, y, w, h, r, move_type) return self:add_collider(tag, "rectangle", x, y, w, h, r, move_type)  end
 function World:add_polygon(tag, vertices, move_type)        return self:add_collider(tag, "polygon"  , vertices, move_type)       end
 function World:add_line(tag, x1, y1, x2, y2, move_type)     return self:add_collider(tag, "line"     , x1, y1, x2, y2, move_type) end
 function World:add_chain(tag, loop, vertices, move_type)    return self:add_collider(tag, "chain"    , loop, vertices, move_type) end
-
-function World:get_collider(tag)              return self.colliders[tag]                        end
-function World:get_c(tag)                     return self.colliders[tag]                        end
-function World:get_shape(coll_tag, shape_tag) return self.colliders[coll_tag].shapes[shape_tag] end
-function World:get_s(coll_tag, shape_tag)     return self.colliders[coll_tag].shapes[shape_tag] end
-function World:is_collider(tag)               return self.colliders[tag] ~= nil                 end
-
-function World:remove_collider(tag) if not self.colliders[tag] then print("Collider: " .. tag .. " doesn't exist.") else self.colliders[tag]:destroy() end return self end
+function World:get_collider(tag)              return self._colliders[tag]                         end
+function World:get_shape(coll_tag, shape_tag) return self._colliders[coll_tag]._shapes[shape_tag] end
+function World:remove_collider(tag) if not self._colliders[tag] then print("Collider: " .. tag .. " doesn't exist.") else self._colliders[tag]:destroy() end return self end
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
@@ -115,7 +108,7 @@ function World:remove_collider(tag) if not self.colliders[tag] then print("Colli
 
 function World:add_joint(tag, joint_type, col1, col2, ...)
     local _tag, _jt, _joint = tag or _uuid(), joint_type, nil
-    if self.joints[_tag] then print("Joint: " .. _tag .. " already exist."); _tag = uuid() end
+    if self._joints[_tag] then print("Joint: " .. _tag .. " already exist."); _tag = uuid() end
     if     _jt == "distance"  then _joint = lp.newDistanceJoint(col1.body, col2.body, ...)
     elseif _jt == "friction"  then _joint = lp.newFrictionJoint(col1.body, col2.body, ...)
     elseif _jt == "gear"      then _joint = lp.newGearJoint(col1.body, col2.body, ...)    
@@ -127,19 +120,16 @@ function World:add_joint(tag, joint_type, col1, col2, ...)
     elseif _jt == "rope"      then _joint = lp.newRopeJoint(col1.body, col2.body, ...)    
     elseif _jt == "weld"      then _joint = lp.newWeldJoint(col1.body, col2.body, ...)    
     elseif _jt == "wheel"     then _joint = lp.newWheelJoint(col1.body, col2.body, ...) end
-    self.joints[_tag] = _joint 
+    self._joints[_tag] = _joint 
     return _joint 
 end
-
-function World:get_joint(tag) return self.joints[tag]        end
-function World:get_j(tag)     return self.joints[tag]        end
-function World:is_joint(tag)  return self.joints[tag] ~= nil end
-
+function World:get_joint(tag) return self._joints[tag] end
+function World:get_joints()   return self._joints      end
 function World:remove_joint(tag)
-    if not self.joints[tag] then print("Joint: " .. tag .. " doesn't exist.") return end
-    self.joints[tag]:setUserData(nil)
-    self.joints[tag]:destroy()
-    self.joints[tag] = nil
+    if not self._joints[tag] then print("Joint: " .. tag .. " doesn't exist.") return end
+    self._joints[tag]:setUserData(nil)
+    self._joints[tag]:destroy()
+    self._joints[tag] = nil
     return self
 end
 
@@ -149,27 +139,27 @@ end
 
 function Collider:add_shape(tag, shape_type, ...)
     local _tag, _st,  _a, _shape = tag or _uuid(), shape_type, {...}, nil
-    if self.shapes[_tag] then print("Shape: " .. _tag .. " already exist."); _tag = uuid() end
+    if self._shapes[_tag] then print("Shape: " .. _tag .. " already exist."); _tag = uuid() end
     if     _st == "circle"    then _shape = lp.newCircleShape(_a[1], _a[2], _a[3])
     elseif _st == "rectangle" then _shape = lp.newRectangleShape(_a[1], _a[2], _a[3], _a[4], _a[5])
     elseif _st == "polygon"   then _shape = lp.newPolygonShape(unpack(_a[1]))
     elseif _st == "line"      then _shape = lp.newEdgeShape(_a[1], _a[2], _a[3], _a[4])
     elseif _st == "chain"     then _shape = lp.newChainShape(_a[1], unpack(_a[2])) end
-    self.shapes[_tag] = setmetatable({   
-        tag     = _tag, 
-        collider = self,
-        shape   = _shape, 
-        fixture = lp.newFixture(self.body, _shape, 1),
-        _enter  = function() end,
-        _exit   = function() end,
-        _pre    = function() end,
-        _post   = function() end  
+    self._shapes[_tag] = setmetatable({   
+        _tag      = _tag, 
+        _collider = self,
+        _shape    = _shape, 
+        _fixture  = lp.newFixture(self._body, _shape, 1),
+        _enter    = function() end,
+        _exit     = function() end,
+        _pre      = function() end,
+        _post     = function() end  
     }, {__index = Shape})
 
-    _set_funcs(self.shapes[_tag], self.shapes[_tag].shape)
-    _set_funcs(self.shapes[_tag], self.shapes[_tag].fixture)
-    self.shapes[_tag].fixture:setUserData(self.shapes[_tag])
-    return self.shapes[_tag]
+    _set_funcs(self._shapes[_tag], self._shapes[_tag]._shape)
+    _set_funcs(self._shapes[_tag], self._shapes[_tag]._fixture)
+    self._shapes[_tag]._fixture:setUserData(self._shapes[_tag])
+    return self._shapes[_tag]
 end
 
 function Collider:add_circle(tag, x, y, r)       return self:add_shape(tag, "circle"   , x, y, r)        end
@@ -177,24 +167,18 @@ function Collider:add_rectangle(tag, x, y, w, h) return self:add_shape(tag, "rec
 function Collider:add_polygon(tag, vertices)     return self:add_shape(tag, "polygon"  , vertices)       end
 function Collider:add_line(tag, x1, y1, x2, y2)  return self:add_shape(tag, "line"     , x1, y1, x2, y2) end
 function Collider:add_chain(tag, loop, vertices) return self:add_shape(tag, "chain"    , loop, vertices) end
-
-function Collider:get_shape(tag) return self.shapes[tag]        end
-function Collider:get_s(tag)     return self.shapes[tag]        end
-function Collider:is_shape(tag)  return self.shapes[tag] ~= nil end
-
-function Collider:remove_shape(tag) if not self.shapes[tag] then print("Shape: " .. tag .. " doesn't exist.") else self.shapes[tag]:destroy() end return self end
-
+function Collider:get_shape(tag) return self._shapes[tag]        end
+function Collider:remove_shape(tag) if not self._shapes[tag] then print("Shape: " .. tag .. " doesn't exist.") else self._shapes[tag]:destroy() end return self end
 function Collider:set_enter(func) if type(func) ~= "function" then print("set_enter is not a function.") else self._enter = func end return self end
 function Collider:set_exit(func)  if type(func) ~= "function" then print("set_exit is not a function.")  else self._exit  = func end return self end
 function Collider:set_pre(func)   if type(func) ~= "function" then print("set_pre is not a function.")   else self._pre   = func end return self end
 function Collider:set_post(func)  if type(func) ~= "function" then print("set_post is not a function.")  else self._post  = func end return self end
-
 function Collider:destroy()
-    if self.body:isDestroyed() then print("Collider: " .. self.tag .. " already destroyed.") return end
-    for k,v in pairs(self.shapes) do v.fixture:setUserData(nil); v.fixture:destroy(); v = nil end
-    self.body:setUserData(nil); self.body:destroy()
-    for k,v in pairs(self) do v = nil end
-    self.world.colliders[self.tag] = nil
+    if self._body:isDestroyed() then print("Collider: " .. self._tag .. " already destroyed.") return end
+    for k,v in pairs(self._shapes) do v._fixture:setUserData(nil); v._fixture:destroy(); v = nil end
+    self._body:setUserData(nil); self._body:destroy()
+    for _,v in pairs(self) do v = nil end
+    self._world._colliders[self._tag] = nil
 end
 
 -------------------------------
@@ -205,12 +189,11 @@ function Shape:set_enter(func) if type(func) ~= "function" then print("set_enter
 function Shape:set_exit(func)  if type(func) ~= "function" then print("set_exit is not a function.")  else self._exit  = func end return self end
 function Shape:set_pre(func)   if type(func) ~= "function" then print("set_pre is not a function.")   else self._pre   = func end return self end
 function Shape:set_post(func)  if type(func) ~= "function" then print("set_post is not a function.")  else self._post  = func end return self end
-
 function Shape:destroy()
-    if self.fixture:isDestroyed() then print("Shape: " .. self.tag .. " already destroyed.") return end 
-    self.fixture:setUserData(nil); self.fixture:destroy()
-    for k,v in pairs(self) do v = nil end
-    self.collider.shapes[self.tag] = nil
+    if self._fixture:isDestroyed() then print("Shape: " .. self._tag .. " already destroyed.") return end 
+    self._fixture:setUserData(nil); self._fixture:destroy()
+    for _,v in pairs(self) do v = nil end
+    self._collider._shapes[self._tag] = nil
 end
 
 -------------------------------
