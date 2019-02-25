@@ -4,45 +4,31 @@ local World, Collider, Shape, lp, lg = {}, {}, {}, love.physics, love.graphics
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
 
-local function _set_funcs(obj1, obj2) for k, v in pairs(obj2.__index) do if
-    k~="__gc"        and 
-    k~="__eq"        and 
-    k~="__index"     and 
-    k~="__tostring"  and 
-    k~="isDestroyed" and 
-    k~="testPoint"   and 
-    k~="getType"     and
-    k~="rayCast"     and 
-    k~="destroy"     and 
-    k~="setUserData" and
-    k~="getUserData" and
-    k~="release"     and 
-    k~="type"        and 
-    k~="typeOf" 
-    then obj1[k] = function(obj1, ...) return v(obj2, ...) end end end 
-end
+local _funcs = {__gc=0,__eq=0,__index=0,__tostring=0,isDestroyed=0,testPoint=0,getType=0,raycast=0,destroy=0,setUserData=0,getUserData=0,release=0,type=0,typeOf=0}
+local function _set_funcs(obj1, obj2) for k, v in pairs(obj2.__index) do if not _funcs[k] then obj1[k] = function(obj1, ...) return v(obj2, ...) end end end end
+
 local _uuid = (function() local _ids = {} return function() local func = function() local r = math.random(16) return ("0123456789ABCDEF"):sub(r, r) end local result = (("xxxxxxxx"):gsub("[x]", func)) while _ids[result] do result = (("xxxxxxxx"):gsub("[x]", func)) end _ids[result] = result return result end end)()
-local function _callback(fix1, fix2, contact, coll_type, ...)
+local function _callback(fix1, fix2, contact, callback, ...)
     local body1, body2   = fix1:getBody()     , fix2:getBody()
-    local coll1, coll2   = body1:getUserData(), body2:getUserData()
+    local col1, col2     = body1:getUserData(), body2:getUserData()
     local shape1, shape2 = fix1:getUserData() , fix2:getUserData()
-    if shape1 then shape1[coll_type](coll1, shape1, coll2, shape2, contact, ...) end
-    if shape2 then shape2[coll_type](coll2, shape2, coll1, shape1, contact, ...) end
-    if coll1  then coll1[coll_type](coll1, shape1, coll2, shape2, contact, ...)  end
-    if coll2  then coll2[coll_type](coll2, shape2, coll1, shape1, contact, ...)  end
+    if shape1 then shape1[callback](coll1, shape1, col2, shape2, contact, ...) end
+    if shape2 then shape2[callback](coll2, shape2, col1, shape1, contact, ...) end
+    if col1   then col1[callback](coll1, shape1, col2, shape2, contact, ...)   end
+    if col2   then col2[callback](coll2, shape2, col1, shape1, contact, ...)   end
 end
-local function _enter(fix1, fix2, contact)     return _callback(fix1, fix2, contact,"_enter")     end
-local function _exit(fix1, fix2, contact)      return _callback(fix1, fix2, contact,"_exit")      end
-local function _pre(fix1, fix2, contact)       return _callback(fix1, fix2, contact,"_pre")       end
-local function _post(fix1, fix2, contact, ...) return _callback(fix1, fix2, contact,"_post", ...) end -- ... => normal_impulse1, tangent_impulse1, normal_impulse2, tangent_impulse2
+local function _enter(fix1, fix2, contact)     return _callback(fix1, fix2, contact, "_enter")     end
+local function _exit(fix1, fix2, contact)      return _callback(fix1, fix2, contact, "_exit")      end
+local function _pre(fix1, fix2, contact)       return _callback(fix1, fix2, contact, "_pre")       end
+local function _post(fix1, fix2, contact, ...) return _callback(fix1, fix2, contact, "_post", ...) end -- ... => normal_impulse1, tangent_impulse1, normal_impulse2, tangent_impulse2
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
 
---todo add_sensor
 --todo set_class
 --todo récupérer toutes les entitées appartenant à une certaine classe
+--todo remplacer get/setUserdata par des .collider / .world  ?
 
 function World:__call(xg,yg,sleep)
     local obj = {}
@@ -205,10 +191,9 @@ function Collider:set_post(func)  if type(func) ~= "function" then print("set_po
 
 function Collider:destroy()
     if self.body:isDestroyed() then print("Collider: " .. self.tag .. " already destroyed.") return end
-    for k,v in pairs(self.shapes) do v.fixture:setUserData(nil); v.fixture:destroy() end
+    for k,v in pairs(self.shapes) do v.fixture:setUserData(nil); v.fixture:destroy(); v = nil end
     self.body:setUserData(nil); self.body:destroy()
-    self.shapes = {}
-    self._enter, self._exit, self._pre, self._post = function() end, function() end, function() end, function() end
+    for k,v in pairs(self) do v = nil end
     self.world.colliders[self.tag] = nil
 end
 
@@ -224,7 +209,7 @@ function Shape:set_post(func)  if type(func) ~= "function" then print("set_post 
 function Shape:destroy()
     if self.fixture:isDestroyed() then print("Shape: " .. self.tag .. " already destroyed.") return end 
     self.fixture:setUserData(nil); self.fixture:destroy()
-    self._enter, self._exit, self._pre, self._post = function() end, function() end, function() end, function() end
+    for k,v in pairs(self) do v = nil end
     self.collider.shapes[self.tag] = nil
 end
 

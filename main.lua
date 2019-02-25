@@ -20,7 +20,7 @@ world:add_rectangle(_, 100, 100, 200, 200)
 
 
 
-world:get_c("ball"):set_enter(function(c1, s1, c2, s2, contact) if c2.class == "walls" then print("touched walls") end end)
+world:get_s("ball", "rect"):set_enter(function(c1, s1, c2, s2, contact) if c2.class == "walls" then s1:destroy() end end)
 world:get_c("ball"):set_exit(function(c1, s1, c2, s2, contact) end)
 world:get_c("ball"):set_pre(function(c1, s1, c2, s2, contact) end)
 world:get_c("ball"):set_post(function(c1, s1, c2, s2, contact, ni1, ti1, ni2, ti2) end)
