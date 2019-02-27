@@ -26,7 +26,6 @@ local function _post(fix1, fix2, contact, ...) return _callback(fix1, fix2, cont
 -------------------------------
 
 --todo récupérer toutes les entitées appartenant à une certaine classe
---todo remplacer get/setUserdata par des .collider / .world  ?
 
 function World:__call(xg,yg,sleep)
     local obj = {}
@@ -57,6 +56,10 @@ function World:draw()
     lg.setColor(_r, _g, _b, _a)
 end
 
+-------------------------------
+--  <°)))>< <°)))>< <°)))><  --
+-------------------------------
+
 function World:add_collider(tag, collider_type, ...)
     local _w, _tag, _ct, _a, _b, _s, _collider = self._b2d, tag or uuid(), collider_type, {...}, nil, nil, setmetatable({}, {__index = Collider})
     if self._colliders[_tag] then print("Collider called " .. _tag .. " already exist."); _tag = uuid() end
@@ -65,24 +68,25 @@ function World:add_collider(tag, collider_type, ...)
     elseif _ct == "polygon"   then _b, _s = lp.newBody(_w,     0,     0, _a[2] or "dynamic"), lp.newPolygonShape(unpack(_a[1]))
     elseif _ct == "line"      then _b, _s = lp.newBody(_w,     0,     0, _a[5] or "static" ), lp.newEdgeShape(_a[1], _a[2], _a[3], _a[4])
     elseif _ct == "chain"     then _b, _s = lp.newBody(_w,     0,     0, _a[3] or "static" ), lp.newChainShape(_a[1], unpack(_a[2]))  end
+    -------------------------------
     _collider._world  = self
     _collider._tag    = _tag
     _collider._body   = _b
-    _collider._shapes = {
-        main = setmetatable({   
-            _tag     = "main", 
-            _shape   = _s, 
-            _fixture = lp.newFixture(_b, _s, 1),
-            _enter  = function() end,
-            _exit   = function() end,
-            _pre    = function() end,
-            _post   = function() end  
-        }, {__index = Shape})
-    }
-    _collider._enter = function() end 
-    _collider._exit  = function() end
-    _collider._pre   = function() end 
-    _collider._post  = function() end 
+    _collider._shapes = {}
+    _collider._enter  = function() end 
+    _collider._exit   = function() end
+    _collider._pre    = function() end 
+    _collider._post   = function() end 
+    -------------------------------
+    _collider._shapes["main"] = setmetatable({   
+        _tag     = "main", 
+        _shape   = _s, 
+        _fixture = lp.newFixture(_b, _s, 1),
+        _enter  = function() end,
+        _exit   = function() end,
+        _pre    = function() end,
+        _post   = function() end  
+    }, {__index = Shape})
     _set_funcs(_collider, _collider._body)
     _set_funcs(_collider, _collider._shapes["main"]._shape)
     _set_funcs(_collider, _collider._shapes["main"]._fixture)
