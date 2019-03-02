@@ -1,10 +1,10 @@
 local World, Collider, Shape, lp, lg = {}, {}, {}, love.physics, love.graphics
+local _funcs = {__gc=0,__eq=0,__index=0,__tostring=0,isDestroyed=0,testPoint=0,getType=0,raycast=0,destroy=0,setUserData=0,getUserData=0,release=0,type=0,typeOf=0}
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
 
-local _funcs = {__gc=0,__eq=0,__index=0,__tostring=0,isDestroyed=0,testPoint=0,getType=0,raycast=0,destroy=0,setUserData=0,getUserData=0,release=0,type=0,typeOf=0}
 local function _set_funcs(obj1, obj2) for k, v in pairs(obj2.__index) do if not _funcs[k] then obj1[k] = function(obj1, ...) return v(obj2, ...) end end end end
 local function _uuid() local fn = function() local r = math.random(16) return ("0123456789ABCDEF"):sub(r, r) end return ("xxxxxxxxxxxxxxxx"):gsub("[x]", fn) end
 local function _callback(fix1, fix2, contact, callback, ...)
@@ -165,18 +165,17 @@ function Collider:add_shape(tag, shape_type, ...)
     self._shapes[_tag]._fixture:setUserData(self._shapes[_tag])
     return self._shapes[_tag]
 end
-
 function Collider:add_circle(tag, x, y, r)       return self:add_shape(tag, "circle"   , x, y, r)        end
 function Collider:add_rectangle(tag, x, y, w, h) return self:add_shape(tag, "rectangle", x, y, w, h)     end
 function Collider:add_polygon(tag, vertices)     return self:add_shape(tag, "polygon"  , vertices)       end
 function Collider:add_line(tag, x1, y1, x2, y2)  return self:add_shape(tag, "line"     , x1, y1, x2, y2) end
 function Collider:add_chain(tag, loop, vertices) return self:add_shape(tag, "chain"    , loop, vertices) end
-function Collider:get_shape(tag) return self._shapes[tag]        end
+function Collider:get_shape(tag) return self._shapes[tag] end
 function Collider:remove_shape(tag) if not self._shapes[tag] then print("Shape: " .. tag .. " doesn't exist.") else self._shapes[tag]:destroy() end return self end
-function Collider:set_enter(func) if type(func) ~= "function" then print("set_enter is not a function.") else self._enter = func end return self end
-function Collider:set_exit(func)  if type(func) ~= "function" then print("set_exit is not a function.")  else self._exit  = func end return self end
-function Collider:set_pre(func)   if type(func) ~= "function" then print("set_pre is not a function.")   else self._pre   = func end return self end
-function Collider:set_post(func)  if type(func) ~= "function" then print("set_post is not a function.")  else self._post  = func end return self end
+function Collider:set_enter(func) self._enter = func end return self end
+function Collider:set_exit(func)  self._exit  = func end return self end
+function Collider:set_pre(func)   self._pre   = func end return self end
+function Collider:set_post(func)  self._post  = func end return self end
 function Collider:destroy()
     if self._body:isDestroyed() then print("Collider: " .. self._tag .. " already destroyed.") return end
     for k,v in pairs(self._shapes) do v._fixture:setUserData(nil); v._fixture:destroy(); v = nil end
@@ -189,10 +188,10 @@ end
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
 
-function Shape:set_enter(func) if type(func) ~= "function" then print("set_enter is not a function.") else self._enter = func end return self end
-function Shape:set_exit(func)  if type(func) ~= "function" then print("set_exit is not a function.")  else self._exit  = func end return self end
-function Shape:set_pre(func)   if type(func) ~= "function" then print("set_pre is not a function.")   else self._pre   = func end return self end
-function Shape:set_post(func)  if type(func) ~= "function" then print("set_post is not a function.")  else self._post  = func end return self end
+function Shape:set_enter(func) self._enter = func end return self end
+function Shape:set_exit(func)  self._exit  = func end return self end
+function Shape:set_pre(func)   self._pre   = func end return self end
+function Shape:set_post(func)  self._post  = func end return self end
 function Shape:destroy()
     if self._fixture:isDestroyed() then print("Shape: " .. self._tag .. " already destroyed.") return end 
     self._fixture:setUserData(nil); self._fixture:destroy()
