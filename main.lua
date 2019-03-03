@@ -18,8 +18,6 @@ world:get_collider("ball"):setFriction(1)
 
 world:add_rectangle(_, 100, 100, 200, 200)
 
-
-
 world:get_shape("ball", "rect"):set_enter(function(c1, s1, c2, s2, contact) if c2.class == "walls" then s1:destroy() end end)
 world:get_collider("ball"):set_exit(function(c1, s1, c2, s2, contact) end)
 world:get_collider("ball"):set_pre(function(c1, s1, c2, s2, contact) end)

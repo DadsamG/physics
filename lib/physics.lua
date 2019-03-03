@@ -4,6 +4,14 @@ local _funcs = {__gc=0,__eq=0,__index=0,__tostring=0,isDestroyed=0,testPoint=0,g
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
+-- world a des classes
+-- world: new_class()
+-- collider:set_class()
+-- class:_enter :_exit: _pre :_post
+
+
+
+
 
 local function _set_funcs(obj1, obj2) for k, v in pairs(obj2.__index) do if not _funcs[k] then obj1[k] = function(obj1, ...) return v(obj2, ...) end end end end
 local function _uuid() local fn = function() local r = math.random(16) return ("0123456789ABCDEF"):sub(r, r) end return ("xxxxxxxxxxxxxxxx"):gsub("[x]", fn) end
