@@ -15,11 +15,13 @@ local function _callback(fix1, fix2, contact, callback, ...)
     local body1, body2   = fix1:getBody()     , fix2:getBody()
     local coll1, coll2   = body1:getUserData(), body2:getUserData()
     local shape1, shape2 = fix1:getUserData() , fix2:getUserData()
-    local class1, class2 = coll1:
-    if shape1 then shape1[callback](coll1, shape1, col2, shape2, contact, ...) end
-    if shape2 then shape2[callback](coll2, shape2, col1, shape1, contact, ...) end
-    if col1   then col1[callback](coll1, shape1, col2, shape2, contact, ...)   end
-    if col2   then col2[callback](coll2, shape2, col1, shape1, contact, ...)   end
+    local class1, class2 = coll1:get_class()  , coll2:get_class()
+    if class1 then class1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end  
+    if class2 then class2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
+    if coll1  then coll1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...)  end
+    if coll2  then coll2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...)  end
+    if shape1 then shape1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end
+    if shape2 then shape2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
 end
 local function _enter(fix1, fix2, contact)     return _callback(fix1, fix2, contact, "_enter")     end
 local function _exit(fix1, fix2, contact)      return _callback(fix1, fix2, contact, "_exit")      end
@@ -197,7 +199,7 @@ function Collider:set_exit(fn)  self._exit  = fn return self end
 function Collider:set_pre(fn)   self._pre   = fn return self end
 function Collider:set_post(fn)  self._post  = fn return self end
 function Collider:set_class(class) if self._world._classes[class] then self._class = class end end
-function Colldier:get_class() return self._class end
+function Collider:get_class() return self._class end
 function Collider:destroy()
     if self._body:isDestroyed() then print("Collider: " .. self._tag .. " already destroyed.") return end
     for k,v in pairs(self._shapes) do v._fixture:setUserData(nil); v._fixture:destroy(); v = nil end
