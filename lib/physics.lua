@@ -1,4 +1,4 @@
-local World, Collider, Shape, lp, lg = {}, {}, {}, love.physics, love.graphics
+local World, Class, Collider, Shape, lp, lg = {}, {}, {}, {}, love.physics, love.graphics
 local _funcs = {__gc=0,__eq=0,__index=0,__tostring=0,isDestroyed=0,testPoint=0,getType=0,raycast=0,destroy=0,setUserData=0,getUserData=0,release=0,type=0,typeOf=0}
 
 -------------------------------
@@ -9,20 +9,19 @@ local _funcs = {__gc=0,__eq=0,__index=0,__tostring=0,isDestroyed=0,testPoint=0,g
 -- collider:set_class()
 -- class:_enter :_exit: _pre :_post
 
-
-
-
-
 local function _set_funcs(obj1, obj2) for k, v in pairs(obj2.__index) do if not _funcs[k] then obj1[k] = function(obj1, ...) return v(obj2, ...) end end end end
 local function _uuid() local fn = function() local r = math.random(16) return ("0123456789ABCDEF"):sub(r, r) end return ("xxxxxxxxxxxxxxxx"):gsub("[x]", fn) end
 local function _callback(fix1, fix2, contact, callback, ...)
     local body1, body2   = fix1:getBody()     , fix2:getBody()
-    local col1, col2     = body1:getUserData(), body2:getUserData()
+    local coll1, coll2   = body1:getUserData(), body2:getUserData()
     local shape1, shape2 = fix1:getUserData() , fix2:getUserData()
-    if shape1 then shape1[callback](coll1, shape1, col2, shape2, contact, ...) end
-    if shape2 then shape2[callback](coll2, shape2, col1, shape1, contact, ...) end
-    if col1   then col1[callback](coll1, shape1, col2, shape2, contact, ...)   end
-    if col2   then col2[callback](coll2, shape2, col1, shape1, contact, ...)   end
+    local class1, class2 = coll1:get_class()  , coll2:get_class()
+    if class1 then class1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end  
+    if class2 then class2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
+    if coll1  then coll1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...)  end
+    if coll2  then coll2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...)  end
+    if shape1 then shape1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end
+    if shape2 then shape2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
 end
 local function _enter(fix1, fix2, contact)     return _callback(fix1, fix2, contact, "_enter")     end
 local function _exit(fix1, fix2, contact)      return _callback(fix1, fix2, contact, "_exit")      end
@@ -38,7 +37,8 @@ function World:__call(xg,yg,sleep)
         -------------------------------------
         obj._b2d = lp.newWorld(xg,yg,sleep)  
         obj._colliders = {}                  
-        obj._joints    = {}                  
+        obj._joints    = {}
+        obj._classes   = {}                
         -------------------------------------
         obj._b2d:setCallbacks(_enter, _exit, _pre, _post)
         _set_funcs(obj, obj._b2d)
@@ -63,6 +63,18 @@ function World:draw()
     end
     lg.setColor(_r, _g, _b, _a)
 end
+
+-------------------------------
+--  <°)))>< <°)))>< <°)))><  --
+-------------------------------
+
+function World:add_class(tag) self._classes[tag] = setmetatable({}, Class) end
+function World:get_class(tag) return self._classes end
+
+function Class:set_enter(fn) self._enter = fn end
+function Class:set_exit(fn)  self._exit  = fn end
+function Class:set_pre(fn)   self._pre   = fn end
+function Class:set_post(fn)  self._post  = fn end
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
@@ -159,7 +171,8 @@ function Collider:add_shape(tag, shape_type, ...)
 
     local obj = {}
     -------------------------------------------------------
-    obj._tag      = _tag                                    
+    obj._tag      = _tag
+    obj._class    = false                              
     obj._shape    = _shape                                  
     obj._collider = self                                    
     obj._fixture  = lp.newFixture(self._body, _shape, 1)    
@@ -181,10 +194,12 @@ function Collider:add_line(tag, x1, y1, x2, y2)  return self:add_shape(tag, "lin
 function Collider:add_chain(tag, loop, vertices) return self:add_shape(tag, "chain"    , loop, vertices) end
 function Collider:get_shape(tag) return self._shapes[tag] end
 function Collider:remove_shape(tag) if not self._shapes[tag] then print("Shape: " .. tag .. " doesn't exist.") else self._shapes[tag]:destroy() end return self end
-function Collider:set_enter(func) self._enter = func return self end
-function Collider:set_exit(func)  self._exit  = func return self end
-function Collider:set_pre(func)   self._pre   = func return self end
-function Collider:set_post(func)  self._post  = func return self end
+function Collider:set_enter(fn) self._enter = fn return self end
+function Collider:set_exit(fn)  self._exit  = fn return self end
+function Collider:set_pre(fn)   self._pre   = fn return self end
+function Collider:set_post(fn)  self._post  = fn return self end
+function Collider:set_class(class) if self._world._classes[class] then self._class = class end end
+function Collider:get_class() return self._class end
 function Collider:destroy()
     if self._body:isDestroyed() then print("Collider: " .. self._tag .. " already destroyed.") return end
     for k,v in pairs(self._shapes) do v._fixture:setUserData(nil); v._fixture:destroy(); v = nil end
@@ -197,10 +212,10 @@ end
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
 
-function Shape:set_enter(func) self._enter = func return self end
-function Shape:set_exit(func)  self._exit  = func return self end
-function Shape:set_pre(func)   self._pre   = func return self end
-function Shape:set_post(func)  self._post  = func return self end
+function Shape:set_enter(fn) self._enter = fn return self end
+function Shape:set_exit(fn)  self._exit  = fn return self end
+function Shape:set_pre(fn)   self._pre   = fn return self end
+function Shape:set_post(fn)  self._post  = fn return self end
 function Shape:destroy()
     if self._fixture:isDestroyed() then print("Shape: " .. self._tag .. " already destroyed.") return end 
     self._fixture:setUserData(nil); self._fixture:destroy()
