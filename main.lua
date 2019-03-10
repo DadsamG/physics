@@ -6,22 +6,30 @@ require("run")
 World = require("lib/physics")
 
 local world = World(0, 0)
+world:add_class("bull")
+:set_enter(function() print("class bull enter") end)
+:set_exit(function() print("class bull exit") end)
 
-world:add_chain("walls", true, {1,1, 800,1, 800, 600, 1, 599}, "static")
-world:get_collider("walls"):setFriction(1)
-world:get_collider("walls").class = "walls"
 
-world:add_circle("ball", 400, 400, 20)
-world:get_collider("ball"):setFriction(1)
-world:get_collider("ball"):add_rectangle("rect", 0, 0, 10, 100, 0):setSensor(true)
-world:get_collider("ball"):setFriction(1)
+local ball = world:add_circle("ball", 400, 400, 20)
+ball:setFixedRotation(true)
+ball:set_enter(function() print("coll bal+r enter") end)
+ball:set_exit(function() print("coll bal+r exit") end)
+ball:set_class("bull")
 
-world:add_rectangle(_, 100, 100, 200, 200)
+local sh_rect = ball:add_rectangle("rect", 0, 0, 10, 300, 0)
+sh_rect:set_enter(function() print("shape rect enter") end)
+sh_rect:set_exit(function() print("shape rect exit") end)
+sh_rect:setSensor(true)
 
-world:get_shape("ball", "rect"):set_enter(function(c1, s1, c2, s2, contact) if c2.class == "walls" then s1:destroy() end end)
-world:get_collider("ball"):set_exit(function(c1, s1, c2, s2, contact) end)
-world:get_collider("ball"):set_pre(function(c1, s1, c2, s2, contact) end)
-world:get_collider("ball"):set_post(function(c1, s1, c2, s2, contact, ni1, ti1, ni2, ti2) end)
+
+local walls = world:add_chain("walls", true, {1,1, 800,1, 800, 600, 1, 599}, "static")
+
+local bg = world:add_rectangle("bg", 150, 200, 200, 200)
+bg:setMass(10000)
+bg:setInertia(0)
+
+
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --

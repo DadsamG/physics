@@ -91,3 +91,18 @@ function lerp(a, b, x, dt) return a + (b - a ) * (1.0 - math.exp(-x * dt)) end
 -------------------------------
 -------------------------------
 -------------------------------
+
+-- local function _callback(fix1, fix2, contact, callback, ...)
+--     local body1, body2   = fix1:getBody()     , fix2:getBody()
+--     local shape1, shape2 = fix1:getUserData() , fix2:getUserData()
+--     local coll1, coll2   = body1:getUserData(), body2:getUserData()
+--     local class1, class2 = coll1:get_class()  , coll2:get_class()
+
+
+--     if class1 then class1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end  
+--     if class2 then class2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
+--     if coll1  then coll1[callback]( class1, coll1, shape1, class2, coll2, shape2, contact, ...) end
+--     if coll2  then coll2[callback]( class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
+--     if shape1 then shape1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end
+--     if shape2 then shape2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
+-- end
