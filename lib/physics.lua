@@ -8,35 +8,34 @@ local _funcs = {__gc=0,__eq=0,__index=0,__tostring=0,isDestroyed=0,testPoint=0,g
 local function _set_funcs(obj1, obj2) for k, v in pairs(obj2.__index) do if not _funcs[k] then obj1[k] = function(obj1, ...) return v(obj2, ...) end end end end
 local function _uuid() local fn = function() local r = math.random(16) return ("0123456789ABCDEF"):sub(r, r) end return ("xxxxxxxxxxxxxxxx"):gsub("[x]", fn) end
 local function _callback(fix1, fix2, contact, callback, ...)
--- nombre de point de contact entre le collider 1 & le collider 2
-    local multiple = false
     local body1, body2   = fix1:getBody()     , fix2:getBody()
     local shape1, shape2 = fix1:getUserData() , fix2:getUserData()
     local coll1, coll2   = body1:getUserData(), body2:getUserData()
     local class1, class2 = coll1:get_class()  , coll2:get_class()
+    local multi_contact = false
 
-    local contacts_body1, contacts_body2 = body1:getContacts(), body2:getContacts()
+    for k,v in pairs(body1:getContacts()) do for k2,v2 in pairs(body2:getContacts()) do if v == v2 and v ~= contact then multi_contact = true break end end end
 
-    for k,v in pairs(contacts_body1) do 
-        for k2,v2 in pairs(contacts_body2) do
-            if v == v2 and v ~= contact then 
-                multiple = true 
-                break
+    if not multi_contact then 
+        if callback == "_enter" or callback == "_exit" then 
+            if class1 then class1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end  
+            if class2 then class2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
+            if coll1  then coll1[callback]( class1, coll1, shape1, class2, coll2, shape2, contact, ...) end
+            if coll2  then coll2[callback]( class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
+        else -- can use _pre & _post callbacks only if collider countain one shape
+            local count1, count2 = 0, 0
+            for k,v in pairs(coll1._shapes) do count1 = count1 + 1 end
+            for k,v in pairs(coll2._shapes) do count2 = count2 + 1 end
+            if coll1 and count1 == 1 then 
+                if class1 then class1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end
+                coll1[callback]( class1, coll1, shape1, class2, coll2, shape2, contact, ...)
+            end
+            if coll2 and count2 == 1 then 
+                if class2 then class2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
+                coll2[callback]( class2, coll2, shape2, class1, coll1, shape1, contact, ...)
             end
         end
     end
-
-
-    if not multiple then 
-        if class1 then class1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end  
-        if class2 then class2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
-        if coll1  then coll1[callback]( class1, coll1, shape1, class2, coll2, shape2, contact, ...) end
-        if coll2  then coll2[callback]( class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
-    else 
-        -- _pre & _post
-
-    end
-
     if shape1 then shape1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end
     if shape2 then shape2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
 

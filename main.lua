@@ -12,12 +12,13 @@ world:add_class("bull")
 
 
 local ball = world:add_circle("ball", 400, 400, 20)
-ball:setFixedRotation(true)
+
 ball:set_enter(function() print("coll bal+r enter") end)
 ball:set_exit(function() print("coll bal+r exit") end)
+ball:set_pre(function() print("coll bal+r pre") end)
 ball:set_class("bull")
 
-local sh_rect = ball:add_rectangle("rect", 0, 0, 10, 300, 0)
+local sh_rect = ball:add_rectangle("rect", 0, 0, 10, 300)
 sh_rect:set_enter(function() print("shape rect enter") end)
 sh_rect:set_exit(function() print("shape rect exit") end)
 sh_rect:setSensor(true)
