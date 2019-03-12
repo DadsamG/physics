@@ -1,5 +1,5 @@
 local World, Class, Collider, Shape, lp, lg = {}, {}, {}, {}, love.physics, love.graphics
-local _funcs = {__gc=0,__eq=0,__index=0,__tostring=0,isDestroyed=0,testPoint=0,getType=0,raycast=0,destroy=0,setUserData=0,getUserData=0,release=0,type=0,typeOf=0}
+local _funcs = {__gc=0,__eq=0,__index=0,__tostring=0,isDestroyed=0,testPoint=0,getType=0,raycast=0,destroy=0,setUserData=0,getUserData=0,release=0,type=0,typeOf=0, update=0}
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
@@ -8,42 +8,35 @@ local _funcs = {__gc=0,__eq=0,__index=0,__tostring=0,isDestroyed=0,testPoint=0,g
 local function _set_funcs(obj1, obj2) for k, v in pairs(obj2.__index) do if not _funcs[k] then obj1[k] = function(obj1, ...) return v(obj2, ...) end end end end
 local function _uuid() local fn = function() local r = math.random(16) return ("0123456789ABCDEF"):sub(r, r) end return ("xxxxxxxxxxxxxxxx"):gsub("[x]", fn) end
 local function _callback(fix1, fix2, contact, callback, ...)
-    local body1, body2   = fix1:getBody()     , fix2:getBody()
+    local body1 , body2  = fix1:getBody()     , fix2:getBody()
     local shape1, shape2 = fix1:getUserData() , fix2:getUserData()
-    local coll1, coll2   = body1:getUserData(), body2:getUserData()
+    local coll1 , coll2  = body1:getUserData(), body2:getUserData()
     local class1, class2 = coll1:get_class()  , coll2:get_class()
-    local multi_contact = false
+    local world          = coll1:get_world()    
 
-    for k,v in pairs(body1:getContacts()) do for k2,v2 in pairs(body2:getContacts()) do if v == v2 and v ~= contact then multi_contact = true break end end end
-
-    if not multi_contact then 
-        if callback == "_enter" or callback == "_exit" then 
-            if class1 then class1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end  
-            if class2 then class2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
-            if coll1  then coll1[callback]( class1, coll1, shape1, class2, coll2, shape2, contact, ...) end
-            if coll2  then coll2[callback]( class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
-        else -- can use _pre & _post callbacks only if collider countain one shape
-            local count1, count2 = 0, 0
-            for k,v in pairs(coll1._shapes) do count1 = count1 + 1 end
-            for k,v in pairs(coll2._shapes) do count2 = count2 + 1 end
-            if coll1 and count1 == 1 then 
-                if class1 then class1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end
-                coll1[callback]( class1, coll1, shape1, class2, coll2, shape2, contact, ...)
-            end
-            if coll2 and count2 == 1 then 
-                if class2 then class2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
-                coll2[callback]( class2, coll2, shape2, class1, coll1, shape1, contact, ...)
-            end
-        end
-    end
-    if shape1 then shape1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end
-    if shape2 then shape2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
-
+    local collision = {
+        fix1     = fix1    ,
+        fix2     = fix2    ,
+        contact  = contact ,
+        callback = callback,
+        body1    = body1   ,
+        body2    = body2   ,
+        shape1   = shape1  ,
+        shape2   = shape2  ,
+        coll1    = coll1   ,
+        coll2    = coll2   ,
+        class1   = class1  ,
+        class2   = class2  ,
+        args     = {...}
+    }
+    table.insert(world._collisions, collision)
+    table.insert(coll1._collisions, collision[callback])
+    table.insert(coll2._collisions, collision[callback])
 end
 local function _enter(fix1, fix2, contact)     return _callback(fix1, fix2, contact, "_enter")     end
 local function _exit(fix1, fix2, contact)      return _callback(fix1, fix2, contact, "_exit")      end
 local function _pre(fix1, fix2, contact)       return _callback(fix1, fix2, contact, "_pre")       end
-local function _post(fix1, fix2, contact, ...) return _callback(fix1, fix2, contact, "_post", ...) end -- ... => normal_impulse1, tangent_impulse1, normal_impulse2, tangent_impulse2
+local function _post(fix1, fix2, contact, ...) return _callback(fix1, fix2, contact, "_post", ...) end -- ... => normal_impulse1, tangent_impulse1, normal_impulse2, tangent_impulse2, ...
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
@@ -53,13 +46,21 @@ function World:__call(xg,yg,sleep)
     local obj = {}
         -------------------------------------
         obj._b2d        = lp.newWorld(xg,yg,sleep)  
-        obj._colliders = {}                  
-        obj._joints    = {}
-        obj._classes   = {}                
+        obj._colliders  = {}                  
+        obj._joints     = {}
+        obj._classes    = {} 
+        obj._collisions = {}               
         -------------------------------------
         obj._b2d:setCallbacks(_enter, _exit, _pre, _post)
         _set_funcs(obj, obj._b2d)
     return setmetatable(obj, {__index = World})
+end
+
+function World:update(dt)
+    self._b2d:update(dt)
+    -- clear collisions of world and every bodies after every frames
+    self._collisions = {}
+    for k,v in pairs(self._colliders) do v._collisions = {} end
 end
 
 function World:draw()
@@ -127,6 +128,12 @@ function World:add_collider(tag, collider_type, ...)
     _collider._exit   = function() end  
     _collider._pre    = function() end  
     _collider._post   = function() end  
+    _collider._collisions = {
+        _pre   = {},
+        _post  = {},
+        _enter = {},
+        _exit  = {}
+    }
     -----------------------------
     _collider._shapes["main"] = setmetatable({   
         _tag     = "main",
@@ -229,6 +236,7 @@ function Collider:set_enter(fn) self._enter = fn return self end
 function Collider:set_exit(fn)  self._exit  = fn return self end
 function Collider:set_pre(fn)   self._pre   = fn return self end
 function Collider:set_post(fn)  self._post  = fn return self end
+function Collider:get_world() return self._world end
 function Collider:set_class(class) if self._world._classes[class] then self._class = class end return self end
 function Collider:get_class() return self._world._classes[self._class] end
 function Collider:destroy()
