@@ -38,7 +38,6 @@ local function _callback(fix1, fix2, contact, callback, ...)
     end
     if shape1 then shape1[callback](class1, coll1, shape1, class2, coll2, shape2, contact, ...) end
     if shape2 then shape2[callback](class2, coll2, shape2, class1, coll1, shape1, contact, ...) end
-
 end
 local function _enter(fix1, fix2, contact)     return _callback(fix1, fix2, contact, "_enter")     end
 local function _exit(fix1, fix2, contact)      return _callback(fix1, fix2, contact, "_exit")      end
