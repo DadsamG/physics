@@ -164,9 +164,9 @@ function World:collisionClassesSet()
     for class_name, collision_list in pairs(collision_table) do
         for _, collision_info in ipairs(collision_list) do
             if collision_info.type == 'enter' then self:addCollisionEnter(class_name, collision_info.other) end
-            if collision_info.type == 'exit' then self:addCollisionExit(class_name, collision_info.other) end
-            if collision_info.type == 'pre' then self:addCollisionPre(class_name, collision_info.other) end
-            if collision_info.type == 'post' then self:addCollisionPost(class_name, collision_info.other) end
+            if collision_info.type == 'exit'  then self:addCollisionExit(class_name, collision_info.other) end
+            if collision_info.type == 'pre'   then self:addCollisionPre(class_name, collision_info.other) end
+            if collision_info.type == 'post'  then self:addCollisionPost(class_name, collision_info.other) end
         end
     end
 
