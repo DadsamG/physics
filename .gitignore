@@ -1,4 +1,2 @@
-/stuff
-*.bat
 *.lua
-!physics.lua
+/stuff 
