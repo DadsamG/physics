@@ -1,2 +1,4 @@
 /stuff 
-*.lua
+/*.lua
+/*.gitignore
+/*.bat
