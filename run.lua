@@ -28,7 +28,7 @@ function love.run()
 end
 
 -- function love.run()
---     local dt, fixed_dt, acc = 0, 1/60, 0
+--     local dt, fixed_dt, acc = 0, 1/20, 0
 -- 	return function()
 --         -- EVENTS --
 --         love.event.pump() 
