@@ -37,7 +37,6 @@ function World:new(xg, yg, sleep)
                 coll2._exit(shape2, shape1, contact)
             end
         end
-
     end
     local function _enter(fix1, fix2, contact)      _callback("_enter", fix1, fix2, contact)      end
     local function _exit(fix1, fix2, contact)       _callback("_exit" , fix1, fix2, contact)      end
@@ -180,6 +179,12 @@ function Collider:set_exit(fn)  self._exit  = fn return self end
 function Collider:get_class()     return self._class         end
 function Collider:get_id()        return self._id            end
 function Collider:get_shape(name) return self._shape[name]   end
+function Collider:set_id(id)
+    assert(not self._world._colliders[id], "Collider " .. id .. " already exists.")
+    self._world._colliders[self._id] = nil 
+    self._id = id
+    self._world._colliders[self._id] = self 
+end
 function Collider:add_shape(name, shape_type, ...)
     assert(not self._shapes[name], "Collider already have a shape called " .. name) 
     local _st, _a, _shape = shape_type, {...}
@@ -216,6 +221,7 @@ function Shape:set_enter(fn)     self._enter = fn       end
 function Shape:set_exit(fn)      self._exit  = fn       end
 function Shape:set_presolve(fn)  self._pre   = fn       end
 function Shape:set_postsolve(fn) self._post  = fn       end
+function Shape:get_collider() return self._collider     end
 function Shape:get_class() return self._collider._class end
 function Shape:get_id()    return self._collider._id    end
 function Shape:destroy() end
