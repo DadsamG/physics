@@ -241,6 +241,12 @@ function Collider:add_shape(name, shape_type, ...)
     return self
 end
 
-function Collider:destroy()end
+function Collider:destroy() end
+
+local Shape = {}
+function Shape:set_enter() end
+function Shape:set_exit() end
+function Shape:set_presolve() end
+function Shape:set_postsolve() end
 
 return setmetatable({}, {__call = World.new})
