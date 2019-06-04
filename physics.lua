@@ -220,18 +220,8 @@ function Shape:get_class() return self._collider._class end
 function Shape:get_id()    return self._collider._id    end
 function Shape:destroy() end
 
-<<<<<<< HEAD
-function Collider:destroy() end
-
-local Shape = {}
-function Shape:set_enter() end
-function Shape:set_exit() end
-function Shape:set_presolve() end
-function Shape:set_postsolve() end
-=======
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
->>>>>>> 4e4812c4af8e8a01feb19a38d0cb10939c0720ca
 
 return setmetatable({}, {__call = World.new})
