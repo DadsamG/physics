@@ -12,11 +12,11 @@ end
 
 function World:new(xg, yg, sleep)
     local function _callback(callback, fix1, fix2, contact, ...)
-        local body1, body2 = fix1:getBody(), fix2:getBody()       
-        local collider1, collider2  = body1:getUserData(), body2:getUserData()
-        local shape1, shape2 = fix1:getUserData(), fix2:getUserData()
-        local world = collider1._world
-        local title = collider1._id .. collider2._id
+        local body1 , body2  = fix1:getBody()     , fix2:getBody()       
+        local coll1 , coll2  = body1:getUserData(), body2:getUserData()
+        local shape1, shape2 = fix1:getUserData() , fix2:getUserData()
+        local world          = coll1._world
+        local title          = coll1._id .. coll2._id
 
         world[callback](shape1, shape2, contact, ...)
         fix1:getUserData()[callback](shape1, shape2, contact, ...)        
@@ -25,22 +25,22 @@ function World:new(xg, yg, sleep)
         if callback == "_enter" then 
             if not world._collisions[title] then 
                 world._collisions[title] = {}
-                collider1._enter(shape1, shape2, contact)
-                collider2._enter(shape2, shape1, contact)
+                coll1._enter(shape1, shape2, contact)
+                coll2._enter(shape2, shape1, contact)
             end
-            table.insert(world._collisions[title], 1)
+            table.insert(world._collisions[title], "flatisjustice")
         elseif callback == "_exit" then
             table.remove(world._collisions[title])
             if #world._collisions[title] == 0 then 
                 world._collisions[title] = nil
-                collider1._exit(shape1, shape2, contact)
-                collider2._exit(shape2, shape1, contact)
+                coll1._exit(shape1, shape2, contact)
+                coll2._exit(shape2, shape1, contact)
             end
         end
 
     end
-    local function _enter(fix1, fix2, contact) _callback("_enter", fix1, fix2, contact) end
-    local function _exit(fix1, fix2, contact) _callback("_exit" , fix1, fix2, contact) end
+    local function _enter(fix1, fix2, contact)      _callback("_enter", fix1, fix2, contact)      end
+    local function _exit(fix1, fix2, contact)       _callback("_exit" , fix1, fix2, contact)      end
     local function _pre(fix1, fix2, contact)        _callback("_pre"  , fix1, fix2, contact)      end
     local function _post(fix1, fix2, contact, ...)  _callback("_post" , fix1, fix2, contact, ...) end -- ... => normal_impulse1, tangent_impulse1, normal_impulse2, tangent_impulse2
     -----------------------------
@@ -85,38 +85,14 @@ function World:set_exit(fn)      self._exit  = fn end
 function World:set_presolve(fn)  self._pre   = fn end
 function World:set_postsolve(fn) self._post  = fn end
 function World:add_class(name, ignore)
-    local function samekeys(t1, t2)
-        for key in pairs(t1) do if not t2[key] then return false end end
-        for key in pairs(t2) do if not t1[key] then return false end end
-        return true
-    end
-    local function collision_graph(graph)
-        local result = {}
-        for letter, _ in pairs(graph) do
-            result[letter] = {}
-            for k,v in pairs(graph) do for _ ,v2 in pairs(v) do if v2 == letter then result[letter][k] = "" end end end
-        end
-        return result
-    end
-    local function unique_graph(graph)
-        local result = {}
-        for k,v in pairs(graph) do table.insert(result, v) end
-        for i = #result, 1,-1 do 
-            local similar = false
-            for j = #result, 1, -1 do if i ~= j and samekeys(result[i], result[j]) then similar = true end end
-            if similar then table.remove( result, i ) end
-        end
-        return result
-    end
-    local function transform_to_number(t1, t2)
-        local result = {}
-        for indice, v in pairs(t2) do for letter,v2 in pairs(t1) do if samekeys(v, v2) then result[letter] = indice end end end
-        return result
-    end
+    local function sa(t1, t2) for k in pairs(t1) do if not t2[k] then return false end end for k in pairs(t2) do if not t1[k] then return false end end return true end
+    local function a(g) local r = {} for l, _ in pairs(g) do r[l] = {} for k,v in pairs(g) do for _ ,v2 in pairs(v) do if v2 == l then r[l][k] = "" end end end end return r end
+    local function b(g) local r = {} for k,v in pairs(g) do table.insert(r, v) end for i = #r, 1,-1 do  local s = false for j = #r, 1, -1 do if i ~= j and sa(r[i], r[j]) then s = true end end if s then table.remove( r, i ) end end return r end
+    local function c(t1, t2) local r = {} for i, v in pairs(t2) do for l,v2 in pairs(t1) do if sa(v, v2) then r[l] = i end end end return r end
     -----------------------------
     local ignore = ignore or {}
     self._classes[name] = ignore
-    self._classes_mask = transform_to_number(collision_graph(self._classes), unique_graph(collision_graph(self._classes)))
+    self._classes_mask = c(a(self._classes), b(a(self._classes)))
 
     for k,v in pairs(self._colliders) do v:set_class(v._class) end
     return self
@@ -144,8 +120,7 @@ function World:add_joint(joint_type, col1, col2, ...)
     return _joint 
 end
 function World:add_collider(collider_type, ...)
-    local _w, _ct, _a, _collider, _b, _s = self._b2d, collider_type, {...}, setmetatable({}, {__index = Collider})
-    if self._colliders[_tag] then print("Collider called " .. _tag .. " already exist."); _tag = uuid() end
+    local _w, _ct, _a, _collider, _b, _s = self._b2d, collider_type, {...}, {}
     if     _ct == "circle"    then _b, _s = lp.newBody(_w, _a[1], _a[2], _a[4] or "dynamic"), lp.newCircleShape(_a[3])
     elseif _ct == "rectangle" then _b, _s = lp.newBody(_w, _a[1], _a[2], _a[6] or "dynamic"), lp.newRectangleShape(0, 0, _a[3], _a[4], _a[5] or 0)
     elseif _ct == "polygon"   then _b, _s = lp.newBody(_w, _a[1], _a[2], _a[4] or "dynamic"), lp.newPolygonShape(unpack(_a[3]))
@@ -154,7 +129,9 @@ function World:add_collider(collider_type, ...)
     -----------------------------
     _collider._world   = self
     _collider._id      = _uid()
-    _collider._class   = "Default"
+    _collider._class   = ""
+    _collider._enter   = function() end
+    _collider._exit    = function() end
     _collider._body    = _b
     _collider._shapes  = {
         main = {
@@ -168,8 +145,6 @@ function World:add_collider(collider_type, ...)
             _post    = function() end
         }
     }
-    _collider._enter   = function() end
-    _collider._exit    = function() end
     -----------------------------
     _collider._shapes["main"]._fixture:setUserData(_collider._shapes["main"])
     _collider._body:setUserData(_collider)
@@ -181,11 +156,11 @@ function World:add_collider(collider_type, ...)
 
     return _collider
 end
-function World:add_circle(x, y, r, move_type)          return self:add_collider("circle"   , x, y, r, move_type)        end
-function World:add_rectangle(x, y, w, h, r, move_type) return self:add_collider("rectangle", x, y, w, h, r, move_type)  end
-function World:add_polygon(x, y, vertices, move_type)  return self:add_collider("polygon"  , x, y, vertices, move_type) end
-function World:add_line(x1, y1, x2, y2, move_type)     return self:add_collider("line"     , x1, y1, x2, y2, move_type) end
-function World:add_chain(loop, vertices, move_type)    return self:add_collider("chain"    , loop, vertices, move_type) end
+function World:add_circle(x, y, r, type)            return self:add_collider("circle"   , x, y, r, type)          end
+function World:add_rectangle(x, y, w, h, rad, type) return self:add_collider("rectangle", x, y, w, h, rad, type)  end
+function World:add_polygon(x, y, vertices, type)    return self:add_collider("polygon"  , x, y, vertices, type)   end
+function World:add_line(x1, y1, x2, y2, type)       return self:add_collider("line"     , x1, y1, x2, y2, type)   end
+function World:add_chain(loop, vertices, type)      return self:add_collider("chain"    , loop, vertices, type)   end
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
@@ -202,8 +177,9 @@ function Collider:set_class(class)
 end
 function Collider:set_enter(fn) self._enter = fn return self end
 function Collider:set_exit(fn)  self._exit  = fn return self end
-function Collider:get_class()     return self._class       end
-function Collider:get_shape(name) return self._shape[name] end
+function Collider:get_class()     return self._class         end
+function Collider:get_id()        return self._id            end
+function Collider:get_shape(name) return self._shape[name]   end
 function Collider:add_shape(name, shape_type, ...)
     assert(not self._shapes[name], "Collider already have a shape called " .. name) 
     local _st, _a, _shape = shape_type, {...}
@@ -236,11 +212,12 @@ function Collider:destroy() end
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
 
-function Shape:set_enter(fn)     self._enter = fn end
-function Shape:set_exit(fn)      self._exit  = fn end
-function Shape:set_presolve(fn)  self._pre   = fn end
-function Shape:set_postsolve(fn) self._post  = fn end
-function Shape:get_class()         return self._collider._class end
+function Shape:set_enter(fn)     self._enter = fn       end
+function Shape:set_exit(fn)      self._exit  = fn       end
+function Shape:set_presolve(fn)  self._pre   = fn       end
+function Shape:set_postsolve(fn) self._post  = fn       end
+function Shape:get_class() return self._collider._class end
+function Shape:get_id()    return self._collider._id    end
 function Shape:destroy() end
 
 <<<<<<< HEAD
