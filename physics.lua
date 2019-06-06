@@ -205,6 +205,7 @@ function Collider:add_shape(name, shape_type, ...)
         _post    = function() end
     }
     -----------------------------
+    _set_funcs(self._shapes[name], self._body, self._shapes[name]._fixture, self._shapes[name]._shape)
     self._shapes[name]._fixture:setUserData(self._shapes[name])
     local tmask = {} for _, v in pairs(self._world._classes[self._class]) do table.insert(tmask, self._world._classes_mask[v]) end
     self._shapes[name]._fixture:setCategory(self._world._classes_mask[self._class])
