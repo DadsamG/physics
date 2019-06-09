@@ -12,29 +12,31 @@ end
 
 function World:new(xg, yg, sleep)
     local function _callback(callback, fix1, fix2, contact, ...)
-        local body1 , body2  = fix1:getBody()     , fix2:getBody()       
-        local coll1 , coll2  = body1:getUserData(), body2:getUserData()
-        local shape1, shape2 = fix1:getUserData() , fix2:getUserData()
-        local world          = coll1._world
-        local title          = coll1._id .. coll2._id
+        if fix1:getUserData() and fix2:getUserData() then
+            local shape1, shape2 = fix1:getUserData() , fix2:getUserData()
+            local coll1 , coll2  = fix1:getBody():getUserData(), fix2:getBody():getUserData()
+            local ctitle         = coll1._id  .. "\t" .. coll2._id
+            local stitle         = shape1._id .. "\t" .. shape2._id
+            local world          = coll1._world
 
-        world[callback](shape1, shape2, contact, ...)
-        fix1:getUserData()[callback](shape1, shape2, contact, ...)        
-        fix2:getUserData()[callback](shape2, shape1, contact, ...) 
-        
-        if callback == "_enter" then 
-            if not world._collisions[title] then 
-                world._collisions[title] = {}
-                coll1._enter(shape1, shape2, contact)
-                coll2._enter(shape2, shape1, contact)
-            end
-            table.insert(world._collisions[title], "flatisjustice")
-        elseif callback == "_exit" then
-            table.remove(world._collisions[title])
-            if #world._collisions[title] == 0 then 
-                world._collisions[title] = nil
-                coll1._exit(shape1, shape2, contact)
-                coll2._exit(shape2, shape1, contact)
+            world[callback](shape1, shape2, contact, ...)
+            fix1:getUserData()[callback](shape1, shape2, contact, ...)        
+            fix2:getUserData()[callback](shape2, shape1, contact, ...) 
+            
+            if callback == "_enter" then 
+                if not world._collisions[ctitle] then 
+                    world._collisions[ctitle] = {}
+                    coll1._enter(shape1, shape2, contact)
+                    coll2._enter(shape2, shape1, contact)
+                end
+                table.insert(world._collisions[ctitle], stitle)
+            elseif callback == "_exit" then
+                for i,v in pairs(world._collisions[ctitle]) do if v == stitle then table.remove(world._collisions[ctitle], i) break end end
+                if #world._collisions[ctitle] == 0 then 
+                    world._collisions[ctitle] = nil
+                    coll1._exit(shape1, shape2, contact)
+                    coll2._exit(shape2, shape1, contact)
+                end
             end
         end
     end
@@ -43,22 +45,24 @@ function World:new(xg, yg, sleep)
     local function _pre(fix1, fix2, contact)        _callback("_pre"  , fix1, fix2, contact)      end
     local function _post(fix1, fix2, contact, ...)  _callback("_post" , fix1, fix2, contact, ...) end -- ... => normal_impulse1, tangent_impulse1, normal_impulse2, tangent_impulse2
     -----------------------------
-    local obj = {}
-        obj._b2d = lp.newWorld(xg, yg, sleep)
-        obj._colliders = {}
-        obj._joints = {}
-        obj._classes = {}
-        obj._classes_mask = {}
-        obj._collisions = {}
-        obj._enter = function() end
-        obj._exit  = function() end
-        obj._pre   = function() end
-        obj._post  = function() end
-        _set_funcs(obj, obj._b2d)
-        obj:setCallbacks(_enter, _exit, _pre, _post)
+    local obj = {
+        _b2d          = lp.newWorld(xg, yg, sleep),
+        _colliders    = {},
+        _joints       = {},
+        _classes      = {},
+        _classes_mask = {},
+        _collisions   = {},
+        _enter        = function() end,
+        _exit         = function() end,
+        _pre          = function() end,
+        _post         = function() end
+    }
+    -----------------------------
+    _set_funcs(obj, obj._b2d)
+    setmetatable(obj, {__index = World})
+    obj:setCallbacks(_enter, _exit, _pre, _post)
+    obj:add_class("Default")
 
-        setmetatable(obj, {__index = World})
-        obj:add_class("Default")
     return obj
 end
 function World:draw()
@@ -135,7 +139,7 @@ function World:add_collider(collider_type, ...)
     _collider._shapes  = {
         main = {
             _collider = _collider,
-            _name    = "main", 
+            _id    = "main_" .. _collider._id, 
             _shape   = _s,
             _fixture = lp.newFixture(_b, _s, 1),
             _enter   = function() end,
@@ -186,7 +190,7 @@ function Collider:set_id(id)
     self._world._colliders[self._id] = self 
 end
 function Collider:add_shape(name, shape_type, ...)
-    assert(not self._shapes[name], "Collider already have a shape called " .. name) 
+    assert(not self._shapes[name], "Collider already have a shape called '" .. name .."'.") 
     local _st, _a, _shape = shape_type, {...}
     if     _st == "circle"    then _shape = lp.newCircleShape(_a[1], _a[2], _a[3])
     elseif _st == "rectangle" then _shape = lp.newRectangleShape(_a[1], _a[2], _a[3], _a[4], _a[5])
@@ -195,14 +199,14 @@ function Collider:add_shape(name, shape_type, ...)
     elseif _st == "chain"     then _shape = lp.newChainShape(_a[1], unpack(_a[2])) end
     -----------------------------
     self._shapes[name] = {
-        _collider= self,
-        _name    = name,
-        _shape   = _shape,
-        _fixture = lp.newFixture(self._body, _shape, 1),
-        _enter   = function() end,
-        _exit    = function() end,
-        _pre     = function() end,
-        _post    = function() end
+        _id       = name .. "_" .. self._id,
+        _collider = self,
+        _shape    = _shape,
+        _fixture  = lp.newFixture(self._body, _shape, 1),
+        _enter    = function() end,
+        _exit     = function() end,
+        _pre      = function() end,
+        _post     = function() end
     }
     -----------------------------
     _set_funcs(self._shapes[name], self._body, self._shapes[name]._fixture, self._shapes[name]._shape)
@@ -212,7 +216,41 @@ function Collider:add_shape(name, shape_type, ...)
     self._shapes[name]._fixture:setMask(unpack(tmask))
     return setmetatable(self._shapes[name], {__index = Shape})
 end
-function Collider:destroy() end
+function Collider:remove_shape(name)
+    assert(self._shapes[name], "Shape '" .. name .. "' doesn't exist.")
+    for k, v in pairs(self._world._collisions) do 
+        if k:find(self._id) then 
+            for i = #v, 1, -1 do 
+                if v[i]:find(self._shapes[name]._id) then table.remove(self._world._collisions[k], i) end
+            end
+        end
+        if #v == 0 then self._world._collisions[k] = nil end
+    end
+
+    self._shapes[name]._fixture:setUserData(nil)
+    self._shapes[name]._fixture:destroy()
+    self._shapes[name]._fixture  = nil
+    self._shapes[name]._collider = nil
+    self._shapes[name]._shape    = nil
+    self._shapes[name]           = nil
+end
+
+function Collider:destroy()
+    for k, v in pairs(self._world._collisions) do if k:find(self._id) then self._world._collisions[k] = nil end end
+    self._world._colliders[self._id] = nil 
+    self._world = nil
+
+    for k,v in pairs(self._shapes) do 
+        v._fixture:setUserData(nil)
+        v._fixture:destroy()
+        v._fixture  = nil
+        v._shape    = nil
+        v._collider = nil
+    end
+    self._body:setUserData(nil)
+    self._body:destroy()
+    self._body = nil
+end
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
@@ -225,7 +263,6 @@ function Shape:set_postsolve(fn) self._post  = fn       end
 function Shape:get_collider() return self._collider     end
 function Shape:get_class() return self._collider._class end
 function Shape:get_id()    return self._collider._id    end
-function Shape:destroy() end
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
