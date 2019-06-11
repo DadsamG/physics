@@ -199,6 +199,7 @@ function Collider:add_shape(name, shape_type, ...)
     elseif _st == "chain"     then _shape = lp.newChainShape(_a[1], unpack(_a[2])) end
     -----------------------------
     self._shapes[name] = {
+        _name     = name,
         _id       = name .. "_" .. self._id,
         _collider = self,
         _shape    = _shape,
@@ -263,6 +264,7 @@ function Shape:set_postsolve(fn) self._post  = fn       end
 function Shape:get_collider() return self._collider     end
 function Shape:get_class() return self._collider._class end
 function Shape:get_id()    return self._collider._id    end
+function Shape:destroy() self._collider:remove_shape(self._name) end
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
