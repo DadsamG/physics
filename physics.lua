@@ -87,14 +87,14 @@ function World:set_enter(fn)     self._enter = fn end
 function World:set_exit(fn)      self._exit  = fn end
 function World:set_presolve(fn)  self._pre   = fn end
 function World:set_postsolve(fn) self._post  = fn end
-function World:add_class(name, ignore)
+function World:add_class(tag, ignore)
     local function sa(t1, t2) for k in pairs(t1) do if not t2[k] then return false end end for k in pairs(t2) do if not t1[k] then return false end end return true end
     local function a(g) local r = {} for l, _ in pairs(g) do r[l] = {} for k,v in pairs(g) do for _ ,v2 in pairs(v) do if v2 == l then r[l][k] = "" end end end end return r end
     local function b(g) local r = {} for k,v in pairs(g) do table.insert(r, v) end for i = #r, 1,-1 do  local s = false for j = #r, 1, -1 do if i ~= j and sa(r[i], r[j]) then s = true end end if s then table.remove( r, i ) end end return r end
     local function c(t1, t2) local r = {} for i, v in pairs(t2) do for l,v2 in pairs(t1) do if sa(v, v2) then r[l] = i end end end return r end
     -----------------------------
     local ignore = ignore or {}
-    self._classes[name] = ignore
+    self._classes[tag] = ignore
     self._classes_mask = c(a(self._classes), b(a(self._classes)))
 
     for k,v in pairs(self._colliders) do v:set_class(v._class) end
@@ -132,6 +132,7 @@ function World:add_collider(collider_type, ...)
     -----------------------------
     _collider._world   = self
     _collider._id      = _uid()
+    _collider._tag    = _collider._id
     _collider._class   = ""
     _collider._enter   = function() end
     _collider._exit    = function() end
@@ -139,7 +140,8 @@ function World:add_collider(collider_type, ...)
     _collider._shapes  = {
         main = {
             _collider = _collider,
-            _id    = "main_" .. _collider._id, 
+            _id      = "main_" .. _collider._id,
+            _tag    = "main",
             _shape   = _s,
             _fixture = lp.newFixture(_b, _s, 1),
             _enter   = function() end,
@@ -178,13 +180,14 @@ function Collider:set_class(class)
     for k, v in pairs(self._shapes) do  v._fixture:setCategory(self._world._classes_mask[class]) v._fixture:setMask(unpack(tmask))end
     return self
 end
-function Collider:set_enter(fn) self._enter = fn return self end
-function Collider:set_exit(fn)  self._exit  = fn return self end
-function Collider:get_class()     return self._class         end
-function Collider:get_id()        return self._id            end
-function Collider:get_shape(name) return self._shape[name]   end
-function Collider:add_shape(name, shape_type, ...)
-    assert(not self._shapes[name], "Collider already have a shape called '" .. name .."'.") 
+function Collider:set_enter(fn)  self._enter = fn return self end
+function Collider:set_exit(fn)   self._exit  = fn return self end
+function Collider:set_tag(tag)   self._tag = tag  return self end
+function Collider:get_class()    return self._class           end
+function Collider:get_tag()      return self._tag             end
+function Collider:get_shape(tag) return self._shape[tag]      end
+function Collider:add_shape(tag, shape_type, ...)
+    assert(not self._shapes[tag], "Collider already have a shape called '" .. tag .."'.") 
     local _st, _a, _shape = shape_type, {...}
     if     _st == "circle"    then _shape = lp.newCircleShape(_a[1], _a[2], _a[3])
     elseif _st == "rectangle" then _shape = lp.newRectangleShape(_a[1], _a[2], _a[3], _a[4], _a[5])
@@ -192,9 +195,9 @@ function Collider:add_shape(name, shape_type, ...)
     elseif _st == "line"      then _shape = lp.newEdgeShape(_a[1], _a[2], _a[3], _a[4])
     elseif _st == "chain"     then _shape = lp.newChainShape(_a[1], unpack(_a[2])) end
     -----------------------------
-    self._shapes[name] = {
-        _name     = name,
-        _id       = name .. "_" .. self._id,
+    self._shapes[tag] = {
+        _tag      = tag,
+        _id       = tag .. "_" .. self._id,
         _collider = self,
         _shape    = _shape,
         _fixture  = lp.newFixture(self._body, _shape, 1),
@@ -204,30 +207,30 @@ function Collider:add_shape(name, shape_type, ...)
         _post     = function() end
     }
     -----------------------------
-    _set_funcs(self._shapes[name], self._body, self._shapes[name]._fixture, self._shapes[name]._shape)
-    self._shapes[name]._fixture:setUserData(self._shapes[name])
+    _set_funcs(self._shapes[tag], self._body, self._shapes[tag]._fixture, self._shapes[tag]._shape)
+    self._shapes[tag]._fixture:setUserData(self._shapes[tag])
     local tmask = {} for _, v in pairs(self._world._classes[self._class]) do table.insert(tmask, self._world._classes_mask[v]) end
-    self._shapes[name]._fixture:setCategory(self._world._classes_mask[self._class])
-    self._shapes[name]._fixture:setMask(unpack(tmask))
-    return setmetatable(self._shapes[name], {__index = Shape})
+    self._shapes[tag]._fixture:setCategory(self._world._classes_mask[self._class])
+    self._shapes[tag]._fixture:setMask(unpack(tmask))
+    return setmetatable(self._shapes[tag], {__index = Shape})
 end
-function Collider:remove_shape(name)
-    assert(self._shapes[name], "Shape '" .. name .. "' doesn't exist.")
+function Collider:remove_shape(tag)
+    assert(self._shapes[tag], "Shape '" .. tag .. "' doesn't exist.")
     for k, v in pairs(self._world._collisions) do 
         if k:find(self._id) then 
             for i = #v, 1, -1 do 
-                if v[i]:find(self._shapes[name]._id) then table.remove(self._world._collisions[k], i) end
+                if v[i]:find(self._shapes[tag]._id) then table.remove(self._world._collisions[k], i) end
             end
         end
         if #v == 0 then self._world._collisions[k] = nil end
     end
 
-    self._shapes[name]._fixture:setUserData(nil)
-    self._shapes[name]._fixture:destroy()
-    self._shapes[name]._fixture  = nil
-    self._shapes[name]._collider = nil
-    self._shapes[name]._shape    = nil
-    self._shapes[name]           = nil
+    self._shapes[tag]._fixture:setUserData(nil)
+    self._shapes[tag]._fixture:destroy()
+    self._shapes[tag]._fixture  = nil
+    self._shapes[tag]._collider = nil
+    self._shapes[tag]._shape    = nil
+    self._shapes[tag]           = nil
 end
 function Collider:destroy()
     for k, v in pairs(self._world._collisions) do if k:find(self._id) then self._world._collisions[k] = nil end end
@@ -250,15 +253,15 @@ end
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
 
-function Shape:set_enter(fn)     self._enter = fn       end
-function Shape:set_exit(fn)      self._exit  = fn       end
-function Shape:set_presolve(fn)  self._pre   = fn       end
-function Shape:set_postsolve(fn) self._post  = fn       end
-function Shape:get_collider() return self._collider     end
-function Shape:get_class() return self._collider._class end
-function Shape:get_id()    return self._collider._id    end
-function Shape:get_name()  return self._name            end
-function Shape:destroy() self._collider:remove_shape(self._name) end
+function Shape:set_enter(fn)     self._enter = fn          end
+function Shape:set_exit(fn)      self._exit  = fn          end
+function Shape:set_presolve(fn)  self._pre   = fn          end
+function Shape:set_postsolve(fn) self._post  = fn          end
+function Shape:get_collider() return self._collider        end
+function Shape:get_class()    return self._collider._class end
+function Shape:get_ctag()     return self._collider._tag   end
+function Shape:get_tag()      return self._tag             end
+function Shape:destroy() self._collider:remove_shape(self._tag) end
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
