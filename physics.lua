@@ -183,12 +183,6 @@ function Collider:set_exit(fn)  self._exit  = fn return self end
 function Collider:get_class()     return self._class         end
 function Collider:get_id()        return self._id            end
 function Collider:get_shape(name) return self._shape[name]   end
-function Collider:set_id(id)
-    assert(not self._world._colliders[id], "Collider " .. id .. " already exists.")
-    self._world._colliders[self._id] = nil 
-    self._id = id
-    self._world._colliders[self._id] = self 
-end
 function Collider:add_shape(name, shape_type, ...)
     assert(not self._shapes[name], "Collider already have a shape called '" .. name .."'.") 
     local _st, _a, _shape = shape_type, {...}
@@ -235,7 +229,6 @@ function Collider:remove_shape(name)
     self._shapes[name]._shape    = nil
     self._shapes[name]           = nil
 end
-
 function Collider:destroy()
     for k, v in pairs(self._world._collisions) do if k:find(self._id) then self._world._collisions[k] = nil end end
     self._world._colliders[self._id] = nil 
@@ -264,6 +257,7 @@ function Shape:set_postsolve(fn) self._post  = fn       end
 function Shape:get_collider() return self._collider     end
 function Shape:get_class() return self._collider._class end
 function Shape:get_id()    return self._collider._id    end
+function Shape:get_name()  return self._name            end
 function Shape:destroy() self._collider:remove_shape(self._name) end
 
 -------------------------------
