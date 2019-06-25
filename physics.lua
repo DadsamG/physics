@@ -70,7 +70,14 @@ function World:draw()
     -- Colliders --
     lg.setColor(1, 1, 1)
     for k1,v1 in pairs(self:getBodies()) do for k2, v2 in pairs(v1:getFixtures()) do 
-        if     v2:getShape():getType() == "circle"  then lg.circle("line", v1:getX(), v1:getY(), v2:getShape():getRadius())
+        if     v2:getShape():getType() == "circle"  then 
+			local _x, _y = v2:getShape():getPoint()
+			lg.push()
+			lg.translate(v1:getX(), v1:getY())
+			lg.rotate(v1:getAngle())
+			lg.circle("line", _x, _y, v2:getShape():getRadius())
+			lg.pop()
+		
         elseif v2:getShape():getType() == "polygon" then lg.polygon("line", v1:getWorldPoints(v2:getShape():getPoints()))
         else   local _p = {v1:getWorldPoints(v2:getShape():getPoints())}; for i=1, #_p, 2 do if i < #_p-2 then lg.line(_p[i], _p[i+1], _p[i+2], _p[i+3]) end end end
     end end
@@ -141,7 +148,7 @@ function World:add_collider(collider_type, ...)
         main = {
             _collider = _collider,
             _id      = "main_" .. _collider._id,
-            _tag    = "main",
+            _tag     = "main",
             _shape   = _s,
             _fixture = lp.newFixture(_b, _s, 1),
             _enter   = function() end,
@@ -185,7 +192,7 @@ function Collider:set_exit(fn)   self._exit  = fn return self end
 function Collider:set_tag(tag)   self._tag = tag  return self end
 function Collider:get_class()    return self._class           end
 function Collider:get_tag()      return self._tag             end
-function Collider:get_shape(tag) return self._shape[tag]      end
+function Collider:get_shape(tag) return self._shapes[tag]      end
 function Collider:add_shape(tag, shape_type, ...)
     assert(not self._shapes[tag], "Collider already have a shape called '" .. tag .."'.") 
     local _st, _a, _shape = shape_type, {...}
