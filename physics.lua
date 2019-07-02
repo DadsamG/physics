@@ -66,19 +66,19 @@ function World:new(xg, yg, sleep)
     return obj
 end
 function World:draw()
-    local _r, _g, _b = lg.getColor()
+    local _r, _g, _b, _a = lg.getColor()
     -- Colliders --
-    lg.setColor(1, 1, 1)
-    for k1,v1 in pairs(self:getBodies()) do for k2, v2 in pairs(v1:getFixtures()) do 
+    for k1,v1 in pairs(self:getBodies()) do for k2, v2 in pairs(v1:getFixtures()) do
+        local _shape = v2:getUserData()
+        lg.setColor(_shape._color.r, _shape._color.g, _shape._color.b, _shape._color.a)
         if     v2:getShape():getType() == "circle"  then 
-			local _x, _y = v2:getShape():getPoint()
-			lg.push()
-			lg.translate(v1:getX(), v1:getY())
-			lg.rotate(v1:getAngle())
-			lg.circle("line", _x, _y, v2:getShape():getRadius())
-			lg.pop()
-		
-        elseif v2:getShape():getType() == "polygon" then lg.polygon("line", v1:getWorldPoints(v2:getShape():getPoints()))
+            local _x, _y = v2:getShape():getPoint()
+            lg.push()
+            lg.translate(v1:getX(), v1:getY())
+            lg.rotate(v1:getAngle())
+                lg.circle(_shape._draw_mode, _x, _y, v2:getShape():getRadius())
+            lg.pop()
+        elseif v2:getShape():getType() == "polygon" then lg.polygon(_shape._draw_mode, v1:getWorldPoints(v2:getShape():getPoints()))
         else   local _p = {v1:getWorldPoints(v2:getShape():getPoints())}; for i=1, #_p, 2 do if i < #_p-2 then lg.line(_p[i], _p[i+1], _p[i+2], _p[i+3]) end end end
     end end
     -- Joints --
@@ -88,7 +88,7 @@ function World:draw()
         if x1 and y1 then lg.circle('line', x1, y1, 6) end
         if x2 and y2 then lg.circle('line', x2, y2, 6) end
     end
-    lg.setColor(_r, _g, _b)
+    lg.setColor(_r, _g, _b, _a)
 end
 function World:set_enter(fn)     self._enter = fn end
 function World:set_exit(fn)      self._exit  = fn end
@@ -147,16 +147,22 @@ function World:add_collider(collider_type, ...)
     _collider._shapes  = {
         main = {
             _collider = _collider,
-            _id      = "main_" .. _collider._id,
-            _tag     = "main",
-            _shape   = _s,
-            _fixture = lp.newFixture(_b, _s, 1),
-            _enter   = function() end,
-            _exit    = function() end,
-            _pre     = function() end,
-            _post    = function() end
+            _id       = "main_" .. _collider._id,
+            _tag      = "main",
+            _shape    = _s,
+            _fixture  = lp.newFixture(_b, _s, 1),
+            _enter    = function() end,
+            _exit     = function() end,
+            _pre      = function() end,
+            _post     = function() end,
+            _is_visible = true,
+            _color      = {r=1, g=1, b=1, a=1},
+            _draw_mode  = "line"
         }
     }
+    _collider._is_visible = true
+    _collider._color      = {r=1, g=1, b=1, a=1}
+    _collider._draw_mode  = "line"
     -----------------------------
     _collider._shapes["main"]._fixture:setUserData(_collider._shapes["main"])
     _collider._body:setUserData(_collider)
@@ -192,7 +198,7 @@ function Collider:set_exit(fn)   self._exit  = fn return self end
 function Collider:set_tag(tag)   self._tag = tag  return self end
 function Collider:get_class()    return self._class           end
 function Collider:get_tag()      return self._tag             end
-function Collider:get_shape(tag) return self._shapes[tag]      end
+function Collider:get_shape(tag) return self._shapes[tag]     end
 function Collider:add_shape(tag, shape_type, ...)
     assert(not self._shapes[tag], "Collider already have a shape called '" .. tag .."'.") 
     local _st, _a, _shape = shape_type, {...}
@@ -211,7 +217,10 @@ function Collider:add_shape(tag, shape_type, ...)
         _enter    = function() end,
         _exit     = function() end,
         _pre      = function() end,
-        _post     = function() end
+        _post     = function() end,
+        _is_visible = self._is_visible,
+        _color      = {r = self._color.r, g = self._color.g, b =self._color.b, a =self._color.a},
+        _draw_mode  = self._draw_mode 
     }
     -----------------------------
     _set_funcs(self._shapes[tag], self._body, self._shapes[tag]._fixture, self._shapes[tag]._shape)
@@ -220,6 +229,21 @@ function Collider:add_shape(tag, shape_type, ...)
     self._shapes[tag]._fixture:setCategory(self._world._classes_mask[self._class])
     self._shapes[tag]._fixture:setMask(unpack(tmask))
     return setmetatable(self._shapes[tag], {__index = Shape})
+end
+function Collider:set_alpha(a) 
+    self._color.a = a
+    for _,v in pairs(self._shapes) do v._color.a = a end 
+    return self 
+end
+function Collider:set_color(r, g, b, a)
+    self._color = {r = r, g = g, b = b, a = a or self._color.a}    
+    for _,v in pairs(self._shapes) do v._color = {r = r, g = g, b = b, a = a or v._color.a} end 
+    return self 
+end
+function Collider:set_draw_mode(mode)
+    self._draw_mode = mode
+    for _,v in pairs(self._shapes) do v._draw_mode = mode end 
+    return self 
 end
 function Collider:remove_shape(tag)
     assert(self._shapes[tag], "Shape '" .. tag .. "' doesn't exist.")
@@ -260,10 +284,13 @@ end
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
 
-function Shape:set_enter(fn)     self._enter = fn          end
-function Shape:set_exit(fn)      self._exit  = fn          end
-function Shape:set_presolve(fn)  self._pre   = fn          end
-function Shape:set_postsolve(fn) self._post  = fn          end
+function Shape:set_enter(fn)     self._enter = fn          return self end
+function Shape:set_exit(fn)      self._exit  = fn          return self end
+function Shape:set_presolve(fn)  self._pre   = fn          return self end
+function Shape:set_postsolve(fn) self._post  = fn          return self end
+function Shape:set_alpha(a)  self._color.a = a             return self end
+function Shape:set_color(r, g, b, a) self._color = {r = r, g = g, b = b, a = a or self._color.a} return self end
+function Shape:set_draw_mode(mode) self._draw_mode = mode return self end
 function Shape:get_collider() return self._collider        end
 function Shape:get_class()    return self._collider._class end
 function Shape:get_ctag()     return self._collider._tag   end
