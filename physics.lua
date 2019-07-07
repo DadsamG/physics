@@ -96,11 +96,11 @@ function World:draw()
     for i = #self._queries, 1, -1 do 
         local _query = self._queries[i] 
         if     _query.type == "circle"   then lg.circle("line", _query.x, _query.y, _query.r)
-        elseif _query.type =="rectangle" then lg.rectangle("line", _query.x, _query.y, _query.w, _query.h) end
+        elseif _query.type =="rectangle" then lg.rectangle("line", _query.x, _query.y, _query.w, _query.h)
+        elseif _query.type == "polygon"  then lg.polygon("line", _query.vertices) end
         _query.frames = _query.frames - 1
         if _query.frames == 0 then  table.remove(self._queries, i) end
     end
-
     lg.setColor(_r, _g, _b, _a)
 end
 function World:set_query_color(r,g,b,a) self._query_color = {r, g, b,a} return self end
@@ -217,6 +217,28 @@ function World:query_rectangle(x, y, w, h, class)
         end
     end
     table.insert(self._queries, {type = "rectangle", x = x, y = y, w = w, h = h, frames = 80 })
+    return _colliders_list
+end
+function World:query_polygon(vertices)
+    local _colliders_list = {}
+    for k,v in pairs(self._colliders) do
+        local _x,_y = v:getPosition()
+        local _collision, _next = false, 1
+        for i = 1, #vertices, 2 do
+            _next = i + 2
+            if _next > #vertices then _next = 1 end
+            local _vcx, _vcy,  _vnx, _vny = vertices[i], vertices[i+1], vertices[_next], vertices[_next+1]
+            if (((_vcy >= _y and _vny < _y) or (_vcy < _y and _vny >= _y)) 
+            and (_x < (_vnx-_vcx)*(_y-_vcy)/ (_vny-_vcy) + _vcx)) then 
+                _collision = not _collision 
+            end
+        end
+        if _collision then
+            if not class then table.insert(_colliders_list, v)
+            elseif class then if v:get_class() == class then table.insert(_colliders_list, v) end end
+        end
+    end
+    table.insert(self._queries, {type = "polygon", vertices = vertices, frames = 80 })
     return _colliders_list
 end
 
