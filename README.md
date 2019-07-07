@@ -22,17 +22,17 @@ Before using it I recommand checking out how the **love.physics** module works.
 ## Basics
 
 There are the concepts of this library :
-- World : One world equals one physic simulation, it's the hightest level container.
-- Colliders : A collider is an object residing in the world that react to the world physic and other colliders.
-- Classes : A collider can have ONE class, it dictate him what other classes the collider can collide with.
-- Shapes : A collider can have multiples shapes
-- Collision callbacks : 
-  - enter : what to do when a collider/shape begin touching another one.
-  - exit : what to do when a collider/shape stop touching another one.
-  - presolve : what to do each frame a collider/shape is touching another one before the physics is applied.
-  - postsolve : what to do each frame a collider/shape is touching another one after the physics is applied.
-- Joints : Attatch 2 colliders together in different ways
-- Queries : Get all the colliders from a certain area
+- **World** : One world equals one physic simulation, it's the hightest level container.
+- **Colliders** : A collider is an object residing in the world that react to the world physic and other colliders.
+- **Classes** : A collider can have ONE class, it dictate him what other classes the collider can collide with.
+- **Shapes** : A collider can have multiples shapes
+- **Collision callbacks** : 
+  - **enter** : what to do when a collider/shape begin touching another one.
+  - **exit** : what to do when a collider/shape stop touching another one.
+  - **presolve** : what to do each frame a collider/shape is touching another one before the physics is applied.
+  - **postsolve** : what to do each frame a collider/shape is touching another one after the physics is applied.
+- **Joints** : Attatch 2 colliders together in different ways
+- **Queries** : Get all the colliders from a certain area
 
 
 
