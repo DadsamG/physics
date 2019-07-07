@@ -1,5 +1,22 @@
 # LOVE_PHYSICS
 
+## What is it ?
+**physics.lua** is a **LÖVE** framework library that wrap the **love.physics** module to make it easier to use.
+It's a complete rewrite of the **Windfield** library https://github.com/adnzzzzZ/windfield.
+
+Why use it instead of Windfield ?
+- Some new features !
+- Windfield is no longer maintened
+- Less LOC, no dependencies
+- I've found some bugs in Windfield (mainly collision callbacks)
+
+Why snake_case ?
+- I currently use snake_case in the library for convenience because I code in it, gonna switch to camelCase soon...
+
+XXX don't work, I want XXX feature
+- I'm open to suggestions, contact me here or on twitter (@4v0v_).
+
+## Basics
 World:new(xg, yg, sleep)
 =>Create a new world
 
