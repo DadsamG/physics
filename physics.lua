@@ -52,6 +52,7 @@ function World:new(xg, yg, sleep)
         _classes      = {},
         _classes_mask = {},
         _collisions   = {},
+        _queries      = {},
         _enter        = function() end,
         _exit         = function() end,
         _pre          = function() end,
@@ -88,6 +89,16 @@ function World:draw()
         if x1 and y1 then lg.circle('line', x1, y1, 6) end
         if x2 and y2 then lg.circle('line', x2, y2, 6) end
     end
+    -- Queries --
+    lg.setColor(0,0.8,1)
+    for i = #self._queries, 1, -1 do 
+        local _query = self._queries[i] 
+        if     _query.type == "circle"   then lg.circle("line", _query.x, _query.y, _query.r)
+        elseif _query.type =="rectangle" then lg.rectangle("line", _query.x, _query.y, _query.w, _query.h) end
+        _query.frames = _query.frames - 1
+        if _query.frames == 0 then  table.remove(self._queries, i) end
+    end
+
     lg.setColor(_r, _g, _b, _a)
 end
 function World:set_enter(fn)     self._enter = fn end
@@ -179,6 +190,32 @@ function World:add_rectangle(x, y, w, h, rad, type) return self:add_collider("re
 function World:add_polygon(x, y, vertices, type)    return self:add_collider("polygon"  , x, y, vertices, type)   end
 function World:add_line(x1, y1, x2, y2, type)       return self:add_collider("line"     , x1, y1, x2, y2, type)   end
 function World:add_chain(loop, vertices, type)      return self:add_collider("chain"    , loop, vertices, type)   end
+
+function World:query_circle(x, y, r, class)
+    local _colliders_list = {}
+    for k,v in pairs(self._colliders) do
+        local _x,_y = v:getPosition()
+        if math.sqrt((_x - x)^2 + (_y - y)^2) <= r then
+            if not class then table.insert(_colliders_list, v)
+            elseif class then if v:get_class() == class then table.insert(_colliders_list, v) end end
+        end
+    end
+    table.insert(self._queries, {type = "circle", x = x, y = y, r = r, frames = 80 })
+    return _colliders_list
+end
+
+function World:query_rectangle(x, y, w, h, class)
+    local _colliders_list = {}
+    for k,v in pairs(self._colliders) do
+        local _x,_y = v:getPosition()
+        if _x >= x and _x <= x + w and _y >= y and _y <= y + h then
+            if not class then table.insert(_colliders_list, v)
+            elseif class then if v:get_class() == class then table.insert(_colliders_list, v) end end
+        end
+    end
+    table.insert(self._queries, {type = "rectangle", x = x, y = y, w = w, h = h, frames = 80 })
+    return _colliders_list
+end
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
