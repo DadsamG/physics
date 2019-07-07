@@ -53,6 +53,8 @@ function World:new(xg, yg, sleep)
         _classes_mask = {},
         _collisions   = {},
         _queries      = {},
+        _query_color= {0, 0.8,   1,  1},
+        _joint_color= {1, 0.5, 0.25, 1},
         _enter        = function() end,
         _exit         = function() end,
         _pre          = function() end,
@@ -83,14 +85,14 @@ function World:draw()
         else   local _p = {v1:getWorldPoints(v2:getShape():getPoints())}; for i=1, #_p, 2 do if i < #_p-2 then lg.line(_p[i], _p[i+1], _p[i+2], _p[i+3]) end end end
     end end
     -- Joints --
-    lg.setColor(1, 0.5, 0.25)
+    lg.setColor(self._joint_color)
     for _, joint in ipairs(self:getJoints()) do
         local x1, y1, x2, y2 = joint:getAnchors()
         if x1 and y1 then lg.circle('line', x1, y1, 6) end
         if x2 and y2 then lg.circle('line', x2, y2, 6) end
     end
     -- Queries --
-    lg.setColor(0,0.8,1)
+    lg.setColor(self._query_color)
     for i = #self._queries, 1, -1 do 
         local _query = self._queries[i] 
         if     _query.type == "circle"   then lg.circle("line", _query.x, _query.y, _query.r)
@@ -101,6 +103,8 @@ function World:draw()
 
     lg.setColor(_r, _g, _b, _a)
 end
+function World:set_query_color(r,g,b,a) self._query_color = {r, g, b,a} return self end
+function World:set_joint_color(r,g,b,a) self._joint_color = {r, g, b,a} return self end
 function World:set_enter(fn)     self._enter = fn end
 function World:set_exit(fn)      self._exit  = fn end
 function World:set_presolve(fn)  self._pre   = fn end
@@ -203,7 +207,6 @@ function World:query_circle(x, y, r, class)
     table.insert(self._queries, {type = "circle", x = x, y = y, r = r, frames = 80 })
     return _colliders_list
 end
-
 function World:query_rectangle(x, y, w, h, class)
     local _colliders_list = {}
     for k,v in pairs(self._colliders) do
