@@ -1,4 +1,4 @@
-# LOVE_PHYSICS
+# PHYSICS
 
 ## What is it ?
 **physics.lua** is a **LÖVE** framework library that wrap the **[love.physics](https://love2d.org/wiki/love.physics)** module to make it easier to use.
