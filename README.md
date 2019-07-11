@@ -13,7 +13,7 @@
 - I currently use snake_case in the library for convenience because I code in it, gonna switch to camelCase soon...
 
 **XXX don't work, I want XXX feature**
-- I'm open to suggestions, contact me here or on twitter (@4v0v_).
+- I'm open to suggestions, contact me here or on twitter ([@4v0v_](https://twitter.com/4v0v_/)).
 
 ## Basics
 
