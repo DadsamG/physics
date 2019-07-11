@@ -1,11 +1,7 @@
 # PHYSICS
 
 ## What is it ?
-**physics.lua** is a **LÖVE** framework library that wrap the **[love.physics](https://love2d.org/wiki/love.physics)** module to make it easier to use.
-
-It's a complete rewrite of the **[Windfield](https://github.com/adnzzzzZ/windfield)** library.
-
-Before using it I recommand checking out how the **love.physics** module works. 
+**physics.lua** is a **LÖVE** framework library that wrap the **[love.physics](https://love2d.org/wiki/love.physics)** module to make it easier to use. It's a complete rewrite of the **[Windfield](https://github.com/adnzzzzZ/windfield)** library. Before using it I recommand checking out how the **love.physics** module works. 
 
 **Why use it instead of Windfield ?**
 - Some new features !
