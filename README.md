@@ -35,14 +35,16 @@ There are the concepts of this library :
 - **Queries** : Get all the colliders from a certain area
 
 
+## API
 
-```lua World:new(xg, yg, sleep) ```
+- **World:new([xg, yg, sleep])**:
+  - **xg** = number
+  - **yg** = number
+  - **sleep** = boolean
+Create a new world, same as **love.physics.newWorld**.
 
-=>Create a new world
-
-```lua World:draw() ```
-
-=>Draw colliders & joints, useful for debug
+- **World:draw()**:
+Draw colliders, joints and queries, useful for debug and fast prototyping.
 
 ```lua World:set_enter(fn) ```
 
