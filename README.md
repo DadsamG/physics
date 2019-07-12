@@ -73,12 +73,13 @@ Global callback function that is going to be called every time a collider is tou
 
 Add a class and what other classes it ignore, it's a wrapper around box2d categories / masks as explained here:
 https://love2d.org/forums/viewtopic.php?f=4&t=75441
+
+For exemple here:
 ```lua
 world:add_class("my_class1", {"my_class1","my_class2")
 world:add_class("my_class2")
 world:add_class("my_class3", {"my_class2"})
 ```
-For exemple here:
 - colliders with the class **my_class1** are only going to collide with colliders with class **my_class3**.
 - colliders with the class **my_class2** are only going to collide with colliders with class **my_class2**.
 - colliders with the class **my_class3** are going to collide with colliders with class **my_class1** and **my_class3**.
