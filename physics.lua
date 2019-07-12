@@ -20,8 +20,8 @@ function World:new(xg, yg, sleep)
             local world          = coll1._world
 
             world[callback](shape1, shape2, contact, ...)
-            fix1:getUserData()[callback](shape1, shape2, contact, ...)        
-            fix2:getUserData()[callback](shape2, shape1, contact, ...) 
+            shape1[callback](shape1, shape2, contact, ...)        
+            shape2[callback](shape2, shape1, contact, ...) 
             
             if callback == "_enter" then 
                 if not world._collisions[ctitle] then 
@@ -37,6 +37,10 @@ function World:new(xg, yg, sleep)
                     coll1._exit(shape1, shape2, contact)
                     coll2._exit(shape2, shape1, contact)
                 end
+
+            elseif callback == "_pre" or callback == "_post" then
+                coll1[callback](shape1, shape2, contact)
+                coll2[callback](shape2, shape1, contact)
             end
         end
     end
@@ -158,6 +162,8 @@ function World:add_collider(collider_type, ...)
     _collider._class   = ""
     _collider._enter   = function() end
     _collider._exit    = function() end
+    _collider._pre     = function() end
+    _collider._post    = function() end
     _collider._body    = _b
     _collider._shapes  = {
         main = {
@@ -175,6 +181,7 @@ function World:add_collider(collider_type, ...)
             _draw_mode  = "line"
         }
     }
+    _collider._data       = {}
     _collider._is_visible = true
     _collider._color      = {r=1, g=1, b=1, a=1}
     _collider._draw_mode  = "line"
@@ -255,11 +262,15 @@ function Collider:set_class(class)
     for k, v in pairs(self._shapes) do  v._fixture:setCategory(self._world._classes_mask[class]) v._fixture:setMask(unpack(tmask))end
     return self
 end
-function Collider:set_enter(fn)  self._enter = fn return self end
-function Collider:set_exit(fn)   self._exit  = fn return self end
+function Collider:set_enter(fn)     self._enter = fn return self end
+function Collider:set_exit(fn)      self._exit  = fn return self end
+function Collider:set_presolve(fn)  self._pre   = fn return self end
+function Collider:set_postsolve(fn) self._post  = fn return self end
+function Collider:set_data(data)    self._data = data return self end
 function Collider:set_tag(tag)   self._tag = tag  return self end
 function Collider:get_class()    return self._class           end
 function Collider:get_tag()      return self._tag             end
+function Collider:get_data(data) return self._data end
 function Collider:get_shape(tag) return self._shapes[tag]     end
 function Collider:add_shape(tag, shape_type, ...)
     assert(not self._shapes[tag], "Collider already have a shape called '" .. tag .."'.") 
