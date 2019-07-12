@@ -43,19 +43,27 @@ Create a new world, same as **love.physics.newWorld**.
 Draw colliders, joints and queries, useful for debug and fast prototyping.
 
 - **World:set_enter(function(shape1, shape2, contact) end)**:
-Global callback function that is going to be called every time a collider touch another
+
+Global callback function that is going to be called every time a collider touch another.
+
 **/!\** **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes **/!\**
 
 - **World:set_exit(function(shape1, shape2, contact) end)**:
-Global callback function that is going to be called every time a collider stop touching another
+
+Global callback function that is going to be called every time a collider stop touching another.
+
 **/!\** **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes **/!\**
 
 - **World:set_presolve(function(shape1, shape2, contact) end)**:
+
 Global callback function that is going to be called every time a collider is touching another, before the physics is applied.
+
 **/!\** **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes **/!\**
 
 - **World:set_postsolve(function(shape1, shape2, contact) end)**:
+
 Global callback function that is going to be called every time a collider is touching another, after the physics is applied.
+
 **/!\** **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes **/!\**
 
 
@@ -63,8 +71,19 @@ Global callback function that is going to be called every time a collider is tou
   - name = string
   - ignore = table
 
-=>Add a class and what other classes it ignore, it's a wrapper around box2d categories / masks as explained here:
+Add a class and what other classes it ignore, it's a wrapper around box2d categories / masks as explained here:
 https://love2d.org/forums/viewtopic.php?f=4&t=75441
+```lua
+world:add_class("my_class1", {"my_class1","my_class2")
+world:add_class("my_class2")
+world:add_class("my_class3", {"my_class2"})
+```
+For exemple here:
+- colliders with the class **my_class1** are only going to collide with colliders with class **my_class3**.
+- colliders with the class **my_class2** are only going to collide with colliders with class **my_class2**.
+- colliders with the class **my_class3** are going to collide with colliders with class **my_class1** and **my_class3**.
+
+
 
 ```lua World:add_joint(joint_type, collider1, collider2, ...)```
 
