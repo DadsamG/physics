@@ -42,17 +42,26 @@ Create a new world, same as **love.physics.newWorld**.
 - **World:draw()**:
 Draw colliders, joints and queries, useful for debug and fast prototyping.
 
-```lua World:set_enter(fn) ```
+- **World:set_enter(function(shape1, shape2, contact) end)**:
+Global callback function that is going to be called every time a collider touch another
+**/!\** **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes **/!\**
 
-```lua World:set_exit(fn) ```
+- **World:set_exit(function(shape1, shape2, contact) end)**:
+Global callback function that is going to be called every time a collider stop touching another
+**/!\** **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes **/!\**
 
-```lua World:set_presolve(fn) ```
+- **World:set_presolve(function(shape1, shape2, contact) end)**:
+Global callback function that is going to be called every time a collider is touching another, before the physics is applied.
+**/!\** **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes **/!\**
 
-```lua World:set_postsolve(fn) ```
+- **World:set_postsolve(function(shape1, shape2, contact) end)**:
+Global callback function that is going to be called every time a collider is touching another, after the physics is applied.
+**/!\** **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes **/!\**
 
-=>Set a global collision callback function
 
-```lua World:add_class(name, ignore) ```
+- **World:add_class(name, ignore)**:
+  - name = string
+  - ignore = table
 
 =>Add a class and what other classes it ignore, it's a wrapper around box2d categories / masks as explained here:
 https://love2d.org/forums/viewtopic.php?f=4&t=75441
