@@ -58,9 +58,12 @@ end
 ## API
 
 ## World 
-
+```lua
+Physics = require("physics")
+```
+---
 ```lua 
-  World:new([xg, yg, sleep])
+World = Physics([xg, yg, sleep])
 ```
   - `xg(number)`
   - `yg(number)`
