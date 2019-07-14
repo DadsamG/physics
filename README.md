@@ -28,7 +28,7 @@ There are the concepts of this library :
 - **Queries** : Get all the colliders from a certain area
 
 
-How to use:
+Minimal exemple:
 ```lua
 function love.load()
     Physics = require("physics")
