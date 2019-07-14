@@ -115,9 +115,9 @@ world:addClass("my_class1", {"my_class1","my_class2")
 world:addClass("my_class2")
 world:addClass("my_class3", {"my_class2"})
 ```
-- colliders with the class **my_class1** are only going to collide with colliders with class **my_class3**.
-- colliders with the class **my_class2** are only going to collide with colliders with class **my_class2**.
-- colliders with the class **my_class3** are going to collide with colliders with class **my_class1** and **my_class3**.
+    - colliders with the class **my_class1** are only going to collide with colliders with class **my_class3**.
+    - colliders with the class **my_class2** are only going to collide with colliders with class **my_class2**.
+    - colliders with the class **my_class3** are going to collide with colliders with class **my_class1** and **my_class3**.
 
 ---
 
