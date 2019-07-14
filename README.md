@@ -57,7 +57,7 @@ end
 
 ## API
 
-## World 
+### World 
 ```lua
 Physics = require("physics")
 ```
@@ -65,9 +65,9 @@ Physics = require("physics")
 ```lua 
 World = Physics([xg, yg, sleep])
 ```
-  - `xg(number)`
-  - `yg(number)`
-  - `sleep(boolean)`
+- `xg(number)`
+- `yg(number)`
+- `sleep(boolean)`
 
 Create a new world, same as **love.physics.newWorld**.
 
@@ -82,7 +82,7 @@ Draw colliders, joints and queries, useful for debug and fast prototyping.
 ```lua 
 World:update(dt)
 ```
-  - `dt(number)`
+- `dt(number)`
 
 Update the world, put this into the **love.update** function.
 
@@ -101,9 +101,10 @@ Global callback functions that is going to be called every time a collider touch
 ---
 ```lua 
 World:addClass(name, ignore)
-  - name = string
-  - ignore = table
 ```
+- `name(string)`
+- `ignore(table)`
+
 
 Add a class and what other classes it ignore, it's a wrapper around box2d categories / masks as explained here:
 https://love2d.org/forums/viewtopic.php?f=4&t=75441
