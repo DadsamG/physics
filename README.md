@@ -17,7 +17,8 @@
 There are the concepts of this library :
 - **World** : One world equals one physic simulation, it's the hightest level container.
 - **Colliders** : Base object of the library, reside in the world, react to the world physic and other colliders. When created it's composed 1 **main** **physics.lua Shape** and contain all(*see Gotcha part) the functions of a LÖVE physics [Body](https://love2d.org/wiki/Body), [Fixture](https://love2d.org/wiki/Fixture) and [Shape](https://love2d.org/wiki/Shape) as well as additional ones defined by this library.
-- **Shapes** : A collider can have multiples shapes, two triangles and one rectangle for exemple. **!!! A **physics.lua** Shape  is not the same as a **love.physics** Shape, more on that in the Shape part !!!**
+- **Shapes** : A collider can have multiples shapes, two triangles and one rectangle for exemple. 
+**!!! A **physics.lua** Shape  is not the same as a **love.physics** Shape, more on that in the Shape part !!!**
 
 - **Classes** : A collider can have ONE class, the class tell what other class the collider can collide with.
 
@@ -65,14 +66,13 @@ Create a new world, same as **love.physics.newWorld**.
 Draw colliders, joints and queries, useful for debug and fast prototyping.
 
 - **World:update(dt)**:
-  -**dt** = number
+  - **dt** = number
 Update the world, put this into the **love.update** function.
 
 - **World:setEnter(function(shape1, shape2, contact) end)**:
 - **World:setExit(function(shape1, shape2, contact) end)**:
 - **World:setPresolve(function(shape1, shape2, contact) end)**:
 - **World:setPostsolve(function(shape1, shape2, contact) end)**:
-
 Global callback functions that is going to be called every time a collider touch (**enter**) stop touching (**exit**) is touching before the physics is applied (**presolve**), after the physics is applied (**postsolve**).
 
 !!! **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes !!!
