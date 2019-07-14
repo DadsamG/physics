@@ -83,18 +83,24 @@ World:update(dt)
 
 Update the world, put this into the **love.update** function.
 
-- **World:setEnter(function(shape1, shape2, contact) end)**:
-- **World:setExit(function(shape1, shape2, contact) end)**:
-- **World:setPresolve(function(shape1, shape2, contact) end)**:
-- **World:setPostsolve(function(shape1, shape2, contact) end)**:
+---
+```lua 
+World:setEnter(function(shape1, shape2, contact) end)
+World:setExit(function(shape1, shape2, contact) end)
+World:setPresolve(function(shape1, shape2, contact) end)
+World:setPostsolve(function(shape1, shape2, contact) end)
+```
 
 Global callback functions that is going to be called every time a collider touch (**enter**) stop touching (**exit**) is touching before the physics is applied (**presolve**), after the physics is applied (**postsolve**).
 
 !!! **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes !!!
 
-- **World:addClass(name, ignore)**:
+---
+```lua 
+World:addClass(name, ignore)
   - name = string
   - ignore = table
+```
 
 Add a class and what other classes it ignore, it's a wrapper around box2d categories / masks as explained here:
 https://love2d.org/forums/viewtopic.php?f=4&t=75441
@@ -108,6 +114,8 @@ world:addClass("my_class3", {"my_class2"})
 - colliders with the class **my_class1** are only going to collide with colliders with class **my_class3**.
 - colliders with the class **my_class2** are only going to collide with colliders with class **my_class2**.
 - colliders with the class **my_class3** are going to collide with colliders with class **my_class1** and **my_class3**.
+
+---
 
 - **World:addJoint(joint_type, collider1, collider2, ...)**:
 Add a joint that contains all the love.physics [Joint](https://love2d.org/wiki/Joint) functions.
