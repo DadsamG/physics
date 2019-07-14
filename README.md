@@ -60,11 +60,11 @@ end
 ## World 
 
 ```lua 
-  **World:new([xg, yg, sleep])** 
+  World:new([xg, yg, sleep])
 ```
-  - **xg** = number
-  - **yg** = number
-  - **sleep** = boolean
+  - `xg(number)`
+  - `yg(number)`
+  - `sleep(boolean)`
 Create a new world, same as **love.physics.newWorld**.
 
 - **World:draw()**:
