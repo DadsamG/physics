@@ -27,6 +27,8 @@ There are the concepts of this library :
 - **Joints** : Attach 2 colliders together in different ways
 - **Queries** : Get all the colliders from a certain area
 
+
+How to use:
 ```lua
 function love.load()
     Physics = require("physics")
@@ -38,9 +40,13 @@ function love.load()
     rect:applyLinearImpulse(1000, 1000)
 end
 
-function love.update(dt) world:update(dt) end
+function love.update(dt) 
+    world:update(dt) 
+end
 
-function love.draw() world:draw() end
+function love.draw() 
+    world:draw() 
+end
 ```
 
 
