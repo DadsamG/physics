@@ -65,7 +65,7 @@ Create a new world, same as **love.physics.newWorld**.
 Draw colliders, joints and queries, useful for debug and fast prototyping.
 
 - **World:update(dt)**:
-  - **dt* = number
+  -**dt** = number
 Update the world, put this into the **love.update** function.
 
 - **World:setEnter(function(shape1, shape2, contact) end)**:
