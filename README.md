@@ -17,7 +17,8 @@
 There are the concepts of this library :
 - **World** : One world equals one physic simulation, it's the hightest level container.
 - **Colliders** : Base object of the library, reside in the world, react to the world physic and other colliders. When created it's composed 1 **main** **physics.lua Shape** and contain all(*see Gotcha part) the functions of a LÖVE physics [Body](https://love2d.org/wiki/Body), [Fixture](https://love2d.org/wiki/Fixture) and [Shape](https://love2d.org/wiki/Shape) as well as additional ones defined by this library.
-- **Shapes** : A collider can have multiples shapes, two triangles and one rectangle for exemple. 
+- **Shapes** : A collider can have multiples shapes, two triangles and one rectangle for exemple.
+
 **!!! A **physics.lua** Shape  is not the same as a **love.physics** Shape, more on that in the Shape part !!!**
 
 - **Classes** : A collider can have ONE class, the class tell what other class the collider can collide with.
@@ -77,8 +78,7 @@ Global callback functions that is going to be called every time a collider touch
 
 !!! **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes !!!
 
-
-- **World:add_class(name, ignore)**:
+- **World:addClass(name, ignore)**:
   - name = string
   - ignore = table
 
@@ -87,23 +87,19 @@ https://love2d.org/forums/viewtopic.php?f=4&t=75441
 
 For exemple here:
 ```lua
-world:add_class("my_class1", {"my_class1","my_class2")
-world:add_class("my_class2")
-world:add_class("my_class3", {"my_class2"})
+world:addClass("my_class1", {"my_class1","my_class2")
+world:addClass("my_class2")
+world:addClass("my_class3", {"my_class2"})
 ```
 - colliders with the class **my_class1** are only going to collide with colliders with class **my_class3**.
 - colliders with the class **my_class2** are only going to collide with colliders with class **my_class2**.
 - colliders with the class **my_class3** are going to collide with colliders with class **my_class1** and **my_class3**.
 
+- **World:addJoint(joint_type, collider1, collider2, ...)**:
+Add a joint that contains all the love.physics [Joint](https://love2d.org/wiki/Joint) functions.
 
-
-```lua World:add_joint(joint_type, collider1, collider2, ...)```
-
-=>Add a joint: https://love2d.org/wiki/Joint
-
-```lua World:add_collider(collider_type, ...) ```
-
-=>Add a collider to the world, a collider is an oject that contains a body, an a "main" shape. 
+- **World:addCollider(collider_type, ...)**:
+Add a collider to the world, a collider is an oject that contains a body, an a "main" shape. 
 You can execute all fixtures/body/shapes functions on it.
 
 
