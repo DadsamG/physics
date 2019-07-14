@@ -108,12 +108,12 @@ function World:draw()
     end
     lg.setColor(_r, _g, _b, _a)
 end
-function World:setQueryColor(r,g,b,a) self._query_color = {r, g, b,a} return self end
-function World:setJointColor(r,g,b,a) self._joint_color = {r, g, b,a} return self end
-function World:setEnter(fn)     self._enter = fn end
-function World:setExit(fn)      self._exit  = fn end
-function World:setPresolve(fn)  self._pre   = fn end
-function World:setPostsolve(fn) self._post  = fn end
+function World:setQueryColor(r,g,b,a) self._query_color = {r, g, b, a} return self end
+function World:setJointColor(r,g,b,a) self._joint_color = {r, g, b, a} return self end
+function World:setEnter(fn)     self._enter = fn return self end
+function World:setExit(fn)      self._exit  = fn return self end
+function World:setPresolve(fn)  self._pre   = fn return self end
+function World:setPostsolve(fn) self._post  = fn return self end
 function World:addClass(tag, ignore)
     local function sa(t1, t2) for k in pairs(t1) do if not t2[k] then return false end end for k in pairs(t2) do if not t1[k] then return false end end return true end
     local function a(g) local r = {} for l, _ in pairs(g) do r[l] = {} for k,v in pairs(g) do for _ ,v2 in pairs(v) do if v2 == l then r[l][k] = "" end end end end return r end
@@ -197,11 +197,11 @@ function World:addCollider(collider_type, ...)
 
     return _collider
 end
-function World:addCircle(x, y, r, type)            return self:addCollider("circle"   , x, y, r, type)          end
-function World:addRectangle(x, y, w, h, rad, type) return self:addCollider("rectangle", x, y, w, h, rad, type)  end
-function World:addPolygon(x, y, vertices, type)    return self:addCollider("polygon"  , x, y, vertices, type)   end
-function World:addLine(x1, y1, x2, y2, type)       return self:addCollider("line"     , x1, y1, x2, y2, type)   end
-function World:addChain(loop, vertices, type)      return self:addCollider("chain"    , loop, vertices, type)   end
+function World:addCircle(x, y, r, type)            return self:addCollider("circle"   , x, y, r, type)         end
+function World:addRectangle(x, y, w, h, rad, type) return self:addCollider("rectangle", x, y, w, h, rad, type) end
+function World:addPolygon(x, y, vertices, type)    return self:addCollider("polygon"  , x, y, vertices, type)  end
+function World:addLine(x1, y1, x2, y2, type)       return self:addCollider("line"     , x1, y1, x2, y2, type)  end
+function World:addChain(loop, vertices, type)      return self:addCollider("chain"    , loop, vertices, type)  end
 function World:queryCircle(x, y, r, class)
     local _colliders_list = {}
     for k,v in pairs(self._colliders) do
@@ -289,16 +289,16 @@ function Collider:setClass(class)
     for k, v in pairs(self._shapes) do  v._fixture:setCategory(self._world._classes_mask[class]) v._fixture:setMask(unpack(tmask))end
     return self
 end
-function Collider:setEnter(fn)     self._enter = fn return self end
-function Collider:setExit(fn)      self._exit  = fn return self end
-function Collider:setPresolve(fn)  self._pre   = fn return self end
-function Collider:setPostsolve(fn) self._post  = fn return self end
-function Collider:setData(data)    self._data = data return self end
-function Collider:setTag(tag)   self._tag = tag  return self end
-function Collider:getClass()    return self._class           end
-function Collider:getTag()      return self._tag             end
-function Collider:getData(data) return self._data end
-function Collider:getShape(tag) return self._shapes[tag]     end
+function Collider:setEnter(fn)     self._enter = fn   return self end
+function Collider:setExit(fn)      self._exit  = fn   return self end
+function Collider:setPresolve(fn)  self._pre   = fn   return self end
+function Collider:setPostsolve(fn) self._post  = fn   return self end
+function Collider:setData(data)    self._data  = data return self end
+function Collider:setTag(tag)      self._tag   = tag  return self end
+function Collider:getClass()    return self._class       end
+function Collider:getTag()      return self._tag         end
+function Collider:getData(data) return self._data        end
+function Collider:getShape(tag) return self._shapes[tag] end
 function Collider:addShape(tag, shape_type, ...)
     assert(not self._shapes[tag], "Collider already have a shape called '" .. tag .."'.") 
     local _st, _a, _shape = shape_type, {...}
@@ -384,11 +384,11 @@ end
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
 
-function Shape:setEnter(fn)     self._enter = fn          return self end
-function Shape:setExit(fn)      self._exit  = fn          return self end
-function Shape:setPresolve(fn)  self._pre   = fn          return self end
-function Shape:setPostsolve(fn) self._post  = fn          return self end
-function Shape:setAlpha(a)  self._color.a = a             return self end
+function Shape:setEnter(fn)     self._enter = fn return self end
+function Shape:setExit(fn)      self._exit  = fn return self end
+function Shape:setPresolve(fn)  self._pre   = fn return self end
+function Shape:setPostsolve(fn) self._post  = fn return self end
+function Shape:setAlpha(a)  self._color.a = a    return self end
 function Shape:setColor(r, g, b, a) self._color = {r = r, g = g, b = b, a = a or self._color.a} return self end
 function Shape:setDrawMode(mode) self._draw_mode = mode return self end
 function Shape:getCollider() return self._collider        end
