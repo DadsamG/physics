@@ -65,13 +65,22 @@ end
   - `xg(number)`
   - `yg(number)`
   - `sleep(boolean)`
+
 Create a new world, same as **love.physics.newWorld**.
 
-- **World:draw()**:
+---
+```lua
+World:draw()
+```
+
 Draw colliders, joints and queries, useful for debug and fast prototyping.
 
-- **World:update(dt)**:
-  - **dt** = number
+---
+```lua 
+World:update(dt)
+```
+  - `dt(number)`
+
 Update the world, put this into the **love.update** function.
 
 - **World:setEnter(function(shape1, shape2, contact) end)**:
