@@ -64,29 +64,18 @@ Create a new world, same as **love.physics.newWorld**.
 - **World:draw()**:
 Draw colliders, joints and queries, useful for debug and fast prototyping.
 
-- **World:set_enter(function(shape1, shape2, contact) end)**:
+- **World:update(dt)**:
+  - **dt* = number
+Update the world, put this into the **love.update** function.
 
-Global callback function that is going to be called every time a collider touch another.
+- **World:setEnter(function(shape1, shape2, contact) end)**:
+- **World:setExit(function(shape1, shape2, contact) end)**:
+- **World:setPresolve(function(shape1, shape2, contact) end)**:
+- **World:setPostsolve(function(shape1, shape2, contact) end)**:
 
-**/!\** **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes **/!\**
+Global callback functions that is going to be called every time a collider touch (**enter**) stop touching (**exit**) is touching before the physics is applied (**presolve**), after the physics is applied (**postsolve**).
 
-- **World:set_exit(function(shape1, shape2, contact) end)**:
-
-Global callback function that is going to be called every time a collider stop touching another.
-
-**/!\** **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes **/!\**
-
-- **World:set_presolve(function(shape1, shape2, contact) end)**:
-
-Global callback function that is going to be called every time a collider is touching another, before the physics is applied.
-
-**/!\** **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes **/!\**
-
-- **World:set_postsolve(function(shape1, shape2, contact) end)**:
-
-Global callback function that is going to be called every time a collider is touching another, after the physics is applied.
-
-**/!\** **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes **/!\**
+!!! **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes !!!
 
 
 - **World:add_class(name, ignore)**:
