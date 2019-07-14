@@ -130,7 +130,6 @@ World:addCollider(collider_type, ...)
 Add a collider to the world, a collider is an oject that contains a body, an a "main" shape. 
 You can execute all fixtures/body/shapes functions on it.
 
----
 ```lua
 World:addRectangle(x, y, width, height, angle, type)
 World:addCircle(x, y, radius, type)
@@ -138,8 +137,9 @@ World:addPolygon(x, y, vertices, type)
 World:addLine(x1, y1, x2, y2, type)
 World:addChain(loop, vertices, type)
 ```
-Shortcut to `World:addCollider(...)`, default type for **rectangle**, **circle**, **polygon** is **dynamic** and **line**, **chain** is **static**.
+Shortcut to `World:addCollider(...)`, default **type** for **rectangle**, **circle**, **polygon** is **dynamic** and **line**, **chain** is **static**.
 
+---
 
 # Gotcha
 Some functions are used internaly or have the same name :
