@@ -68,7 +68,7 @@ function World:new(xg, yg, sleep)
     _set_funcs(obj, obj._b2d)
     setmetatable(obj, {__index = World})
     obj:setCallbacks(_enter, _exit, _pre, _post)
-    obj:add_class("Default")
+    obj:addClass("Default")
 
     return obj
 end
@@ -101,19 +101,20 @@ function World:draw()
         local _query = self._queries[i] 
         if     _query.type == "circle"   then lg.circle("line", _query.x, _query.y, _query.r)
         elseif _query.type =="rectangle" then lg.rectangle("line", _query.x, _query.y, _query.w, _query.h)
-        elseif _query.type == "polygon"  then lg.polygon("line", _query.vertices) end
+        elseif _query.type == "polygon"  then lg.polygon("line", _query.vertices) 
+        elseif _query.type == "line"     then lg.line(_query.x1, _query.y1, _query.x2, _query.y2)  end
         _query.frames = _query.frames - 1
         if _query.frames == 0 then  table.remove(self._queries, i) end
     end
     lg.setColor(_r, _g, _b, _a)
 end
-function World:set_query_color(r,g,b,a) self._query_color = {r, g, b,a} return self end
-function World:set_joint_color(r,g,b,a) self._joint_color = {r, g, b,a} return self end
-function World:set_enter(fn)     self._enter = fn end
-function World:set_exit(fn)      self._exit  = fn end
-function World:set_presolve(fn)  self._pre   = fn end
-function World:set_postsolve(fn) self._post  = fn end
-function World:add_class(tag, ignore)
+function World:setQueryColor(r,g,b,a) self._query_color = {r, g, b,a} return self end
+function World:setJointColor(r,g,b,a) self._joint_color = {r, g, b,a} return self end
+function World:setEnter(fn)     self._enter = fn end
+function World:setExit(fn)      self._exit  = fn end
+function World:setPresolve(fn)  self._pre   = fn end
+function World:setPostsolve(fn) self._post  = fn end
+function World:addClass(tag, ignore)
     local function sa(t1, t2) for k in pairs(t1) do if not t2[k] then return false end end for k in pairs(t2) do if not t1[k] then return false end end return true end
     local function a(g) local r = {} for l, _ in pairs(g) do r[l] = {} for k,v in pairs(g) do for _ ,v2 in pairs(v) do if v2 == l then r[l][k] = "" end end end end return r end
     local function b(g) local r = {} for k,v in pairs(g) do table.insert(r, v) end for i = #r, 1,-1 do  local s = false for j = #r, 1, -1 do if i ~= j and sa(r[i], r[j]) then s = true end end if s then table.remove( r, i ) end end return r end
@@ -123,10 +124,10 @@ function World:add_class(tag, ignore)
     self._classes[tag] = ignore
     self._classes_mask = c(a(self._classes), b(a(self._classes)))
 
-    for k,v in pairs(self._colliders) do v:set_class(v._class) end
+    for k,v in pairs(self._colliders) do v:setClass(v._class) end
     return self
 end
-function World:add_joint(joint_type, col1, col2, ...)
+function World:addJoint(joint_type, col1, col2, ...)
     local _jt,_joint, _j  = joint_type, {}
     if     _jt == "distance"  then _j = lp.newDistanceJoint(col1._body, col2._body, ...)
     elseif _jt == "friction"  then _j = lp.newFrictionJoint(col1._body, col2._body, ...)
@@ -148,7 +149,7 @@ function World:add_joint(joint_type, col1, col2, ...)
 
     return _joint 
 end
-function World:add_collider(collider_type, ...)
+function World:addCollider(collider_type, ...)
     local _w, _ct, _a, _collider, _b, _s = self._b2d, collider_type, {...}, {}
     if     _ct == "circle"    then _b, _s = lp.newBody(_w, _a[1], _a[2], _a[4] or "dynamic"), lp.newCircleShape(_a[3])
     elseif _ct == "rectangle" then _b, _s = lp.newBody(_w, _a[1], _a[2], _a[6] or "dynamic"), lp.newRectangleShape(0, 0, _a[3], _a[4], _a[5] or 0)
@@ -191,42 +192,41 @@ function World:add_collider(collider_type, ...)
     _set_funcs(_collider, _collider._body, _collider._shapes["main"]._shape, _collider._shapes["main"]._fixture)
     setmetatable(_collider._shapes["main"], {__index = Shape})
     setmetatable(_collider, {__index = Collider})
-    _collider:set_class("Default")
+    _collider:setClass("Default")
     self._colliders[_collider._id] = _collider
 
     return _collider
 end
-function World:add_circle(x, y, r, type)            return self:add_collider("circle"   , x, y, r, type)          end
-function World:add_rectangle(x, y, w, h, rad, type) return self:add_collider("rectangle", x, y, w, h, rad, type)  end
-function World:add_polygon(x, y, vertices, type)    return self:add_collider("polygon"  , x, y, vertices, type)   end
-function World:add_line(x1, y1, x2, y2, type)       return self:add_collider("line"     , x1, y1, x2, y2, type)   end
-function World:add_chain(loop, vertices, type)      return self:add_collider("chain"    , loop, vertices, type)   end
-
-function World:query_circle(x, y, r, class)
+function World:addCircle(x, y, r, type)            return self:addCollider("circle"   , x, y, r, type)          end
+function World:addRectangle(x, y, w, h, rad, type) return self:addCollider("rectangle", x, y, w, h, rad, type)  end
+function World:addPolygon(x, y, vertices, type)    return self:addCollider("polygon"  , x, y, vertices, type)   end
+function World:addLine(x1, y1, x2, y2, type)       return self:addCollider("line"     , x1, y1, x2, y2, type)   end
+function World:addChain(loop, vertices, type)      return self:addCollider("chain"    , loop, vertices, type)   end
+function World:queryCircle(x, y, r, class)
     local _colliders_list = {}
     for k,v in pairs(self._colliders) do
         local _x,_y = v:getPosition()
         if math.sqrt((_x - x)^2 + (_y - y)^2) <= r then
             if not class then table.insert(_colliders_list, v)
-            elseif class then if v:get_class() == class then table.insert(_colliders_list, v) end end
+            elseif class then if v:getClass() == class then table.insert(_colliders_list, v) end end
         end
     end
     table.insert(self._queries, {type = "circle", x = x, y = y, r = r, frames = 80 })
     return _colliders_list
 end
-function World:query_rectangle(x, y, w, h, class)
+function World:queryRectangle(x, y, w, h, class)
     local _colliders_list = {}
     for k,v in pairs(self._colliders) do
         local _x,_y = v:getPosition()
         if _x >= x and _x <= x + w and _y >= y and _y <= y + h then
             if not class then table.insert(_colliders_list, v)
-            elseif class then if v:get_class() == class then table.insert(_colliders_list, v) end end
+            elseif class then if v:getClass() == class then table.insert(_colliders_list, v) end end
         end
     end
     table.insert(self._queries, {type = "rectangle", x = x, y = y, w = w, h = h, frames = 80 })
     return _colliders_list
 end
-function World:query_polygon(vertices)
+function World:queryPolygon(vertices, class)
     local _colliders_list = {}
     for k,v in pairs(self._colliders) do
         local _x,_y = v:getPosition()
@@ -242,18 +242,45 @@ function World:query_polygon(vertices)
         end
         if _collision then
             if not class then table.insert(_colliders_list, v)
-            elseif class then if v:get_class() == class then table.insert(_colliders_list, v) end end
+            elseif class then if v:getClass() == class then table.insert(_colliders_list, v) end end
         end
     end
     table.insert(self._queries, {type = "polygon", vertices = vertices, frames = 80 })
     return _colliders_list
+end
+function World:queryLine(x1, y1, x2, y2, class)
+    local _colliders_list, _colliders_tag = {}, {}
+    self._b2d:rayCast(x1, y1, x2, y2, function(fixture)
+        if not class then 
+            if not _colliders_tag[fixture:getUserData():getCtag()] then 
+                table.insert(_colliders_list, fixture:getUserData():getCollider())
+                _colliders_tag[fixture:getUserData():getCtag()] = "flatisjustice"
+            end
+        else
+            if fixture:getUserData():getCollider():getClass() == class then 
+                if not _colliders_tag[fixture:getUserData():getCtag()] then 
+                    table.insert(_colliders_list, fixture:getUserData():getCollider())
+                    _colliders_tag[fixture:getUserData():getCtag()] = "flatisjustice"
+                end
+            end
+        end
+        return 1
+    end)
+    table.insert(self._queries, {type = "line", x1 = x1, y1 = y1, x2 = x2, y2 = y2, frames = 80 })
+    return _colliders_list
+end
+function World:destroy()
+    for k,v in pairs(self._colliders) do v:destroy() end
+    for k,v in pairs(self._joints) do v:destroy() end
+    self.box2d:destroy()
+    for k,v in pairs(self) do v = nil end
 end
 
 -------------------------------
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
 
-function Collider:set_class(class)
+function Collider:setClass(class)
     local class = class or "Default"
     assert( self._world._classes[class] , "Class "  .. class .. " is undefined.")
     self._class = class
@@ -262,17 +289,17 @@ function Collider:set_class(class)
     for k, v in pairs(self._shapes) do  v._fixture:setCategory(self._world._classes_mask[class]) v._fixture:setMask(unpack(tmask))end
     return self
 end
-function Collider:set_enter(fn)     self._enter = fn return self end
-function Collider:set_exit(fn)      self._exit  = fn return self end
-function Collider:set_presolve(fn)  self._pre   = fn return self end
-function Collider:set_postsolve(fn) self._post  = fn return self end
-function Collider:set_data(data)    self._data = data return self end
-function Collider:set_tag(tag)   self._tag = tag  return self end
-function Collider:get_class()    return self._class           end
-function Collider:get_tag()      return self._tag             end
-function Collider:get_data(data) return self._data end
-function Collider:get_shape(tag) return self._shapes[tag]     end
-function Collider:add_shape(tag, shape_type, ...)
+function Collider:setEnter(fn)     self._enter = fn return self end
+function Collider:setExit(fn)      self._exit  = fn return self end
+function Collider:setPresolve(fn)  self._pre   = fn return self end
+function Collider:setPostsolve(fn) self._post  = fn return self end
+function Collider:setData(data)    self._data = data return self end
+function Collider:setTag(tag)   self._tag = tag  return self end
+function Collider:getClass()    return self._class           end
+function Collider:getTag()      return self._tag             end
+function Collider:getData(data) return self._data end
+function Collider:getShape(tag) return self._shapes[tag]     end
+function Collider:addShape(tag, shape_type, ...)
     assert(not self._shapes[tag], "Collider already have a shape called '" .. tag .."'.") 
     local _st, _a, _shape = shape_type, {...}
     if     _st == "circle"    then _shape = lp.newCircleShape(_a[1], _a[2], _a[3])
@@ -303,22 +330,22 @@ function Collider:add_shape(tag, shape_type, ...)
     self._shapes[tag]._fixture:setMask(unpack(tmask))
     return setmetatable(self._shapes[tag], {__index = Shape})
 end
-function Collider:set_alpha(a) 
+function Collider:setAlpha(a) 
     self._color.a = a
     for _,v in pairs(self._shapes) do v._color.a = a end 
     return self 
 end
-function Collider:set_color(r, g, b, a)
+function Collider:setColor(r, g, b, a)
     self._color = {r = r, g = g, b = b, a = a or self._color.a}    
     for _,v in pairs(self._shapes) do v._color = {r = r, g = g, b = b, a = a or v._color.a} end 
     return self 
 end
-function Collider:set_draw_mode(mode)
+function Collider:setDrawMode(mode)
     self._draw_mode = mode
     for _,v in pairs(self._shapes) do v._draw_mode = mode end 
     return self 
 end
-function Collider:remove_shape(tag)
+function Collider:removeShape(tag)
     assert(self._shapes[tag], "Shape '" .. tag .. "' doesn't exist.")
     for k, v in pairs(self._world._collisions) do 
         if k:find(self._id) then 
@@ -357,17 +384,17 @@ end
 --  <°)))>< <°)))>< <°)))><  --
 -------------------------------
 
-function Shape:set_enter(fn)     self._enter = fn          return self end
-function Shape:set_exit(fn)      self._exit  = fn          return self end
-function Shape:set_presolve(fn)  self._pre   = fn          return self end
-function Shape:set_postsolve(fn) self._post  = fn          return self end
-function Shape:set_alpha(a)  self._color.a = a             return self end
-function Shape:set_color(r, g, b, a) self._color = {r = r, g = g, b = b, a = a or self._color.a} return self end
-function Shape:set_draw_mode(mode) self._draw_mode = mode return self end
-function Shape:get_collider() return self._collider        end
-function Shape:get_class()    return self._collider._class end
-function Shape:get_ctag()     return self._collider._tag   end
-function Shape:get_tag()      return self._tag             end
+function Shape:setEnter(fn)     self._enter = fn          return self end
+function Shape:setExit(fn)      self._exit  = fn          return self end
+function Shape:setPresolve(fn)  self._pre   = fn          return self end
+function Shape:setPostsolve(fn) self._post  = fn          return self end
+function Shape:setAlpha(a)  self._color.a = a             return self end
+function Shape:setColor(r, g, b, a) self._color = {r = r, g = g, b = b, a = a or self._color.a} return self end
+function Shape:setDrawMode(mode) self._draw_mode = mode return self end
+function Shape:getCollider() return self._collider        end
+function Shape:getClass()    return self._collider._class end
+function Shape:getCtag()     return self._collider._tag   end
+function Shape:getTag()      return self._tag             end
 function Shape:destroy() self._collider:remove_shape(self._tag) end
 
 -------------------------------
