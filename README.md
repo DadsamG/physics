@@ -109,7 +109,7 @@ https://love2d.org/forums/viewtopic.php?f=4&t=75441
 
 Exemple:
 ```lua
-world:addClass("my_class1", {"my_class1","my_class2")
+world:addClass("my_class1", {"my_class1","my_class2"})
 world:addClass("my_class2")
 world:addClass("my_class3", {"my_class2"})
 ```
