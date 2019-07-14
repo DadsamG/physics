@@ -17,8 +17,11 @@
 There are the concepts of this library :
 - **World** : One world equals one physic simulation, it's the hightest level container.
 - **Colliders** : A collider is an object residing in the world that react to the world physic and other colliders.
+When created it's composed of a body, a "main" shape and a fixture.
+- **Shapes** : A collider can have multiples shapes, two triangles and one rectangle for exemple. **!!! A **physics.lua** Shape  is not the same as a **love.physics** Shape, more on that in the Shape part !!!**
+
 - **Classes** : A collider can have ONE class, the class tell what other class the collider can collide with.
-- **Shapes** : A collider can have multiples shapes, two triangles and one rectangle for exemple. **!!! It's not the same as love.physics "shapes" !!!**
+
 - **Collision callbacks** : 
   - **enter** : what to do when a collider/shape begin touching another one.
   - **exit** : what to do when a collider/shape stop touching another one.
