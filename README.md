@@ -135,7 +135,27 @@ World:addChain(loop, vertices, type)
 ```
 Shortcut to `World:addCollider(...)`, default **type** for **rectangle**, **circle**, **polygon** is **dynamic** and **line**, **chain** is **static**.
 
----
+## Queries
+
+```lua
+World:queryRectangle(x,y, width, height, class)
+World:queryCircle(x, y, radius, class)
+World:queryPolygon(verticles, class)
+World:queryLine(x1, y1, x2, y2, class)
+```
+
+## Colliders
+
+```lua 
+Collider:setEnter(function(shape1, shape2, contact) end)
+CollidersetExit(function(shape1, shape2, contact) end)
+Collider:setPresolve(function(shape1, shape2, contact) end)
+Collider:setPostsolve(function(shape1, shape2, contact) end)
+```
+
+## Shapes
+
+
 
 # Gotcha
 Some functions are used internaly or have the same name :
