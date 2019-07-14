@@ -104,27 +104,29 @@ World:addClass(name, ignore)
 ```
 - `name(string)`
 - `ignore(table)`
-
-
 Add a class and what other classes it ignore, it's a wrapper around box2d categories / masks as explained here:
 https://love2d.org/forums/viewtopic.php?f=4&t=75441
 
-For exemple here:
+Exemple:
 ```lua
 world:addClass("my_class1", {"my_class1","my_class2")
 world:addClass("my_class2")
 world:addClass("my_class3", {"my_class2"})
 ```
-    - colliders with the class **my_class1** are only going to collide with colliders with class **my_class3**.
-    - colliders with the class **my_class2** are only going to collide with colliders with class **my_class2**.
-    - colliders with the class **my_class3** are going to collide with colliders with class **my_class1** and **my_class3**.
+- colliders with the class **my_class1** are only going to collide with colliders with class **my_class3**.
+- colliders with the class **my_class2** are only going to collide with colliders with class **my_class2**.
+- colliders with the class **my_class3** are going to collide with colliders with class **my_class1** and **my_class3**.
 
 ---
-
-- **World:addJoint(joint_type, collider1, collider2, ...)**:
+```lua
+World:addJoint(joint_type, collider1, collider2, ...)
+```
 Add a joint that contains all the love.physics [Joint](https://love2d.org/wiki/Joint) functions.
 
-- **World:addCollider(collider_type, ...)**:
+---
+```lua
+World:addCollider(collider_type, ...)
+```
 Add a collider to the world, a collider is an oject that contains a body, an a "main" shape. 
 You can execute all fixtures/body/shapes functions on it.
 
