@@ -16,7 +16,7 @@
 
 There are the concepts of this library :
 - **World** : One world equals one physic simulation, it's the hightest level container.
-- **Colliders** : Base object of the library, reside in the world, react to the world physic and other colliders. When created it's composed 1 **main** **physics.lua Shape** and contain all the functions of a LÖVE physics [Body](https://love2d.org/wiki/Body), [Fixture](https://love2d.org/wiki/Fixture) and [Shape](https://love2d.org/wiki/Shape) as well as additional ones defined by this library.
+- **Colliders** : Base object of the library, reside in the world, react to the world physic and other colliders. When created it's composed 1 **main** **physics.lua Shape** and contain all(*see Gotcha part) the functions of a LÖVE physics [Body](https://love2d.org/wiki/Body), [Fixture](https://love2d.org/wiki/Fixture) and [Shape](https://love2d.org/wiki/Shape) as well as additional ones defined by this library.
 - **Shapes** : A collider can have multiples shapes, two triangles and one rectangle for exemple. **!!! A **physics.lua** Shape  is not the same as a **love.physics** Shape, more on that in the Shape part !!!**
 
 - **Classes** : A collider can have ONE class, the class tell what other class the collider can collide with.
@@ -28,6 +28,7 @@ There are the concepts of this library :
   - **postsolve** : what to do each frame a collider/shape is touching another one after the physics is applied.
 - **Joints** : Attach 2 colliders together in different ways, see [Joints](https://love2d.org/wiki/Joint)
 - **Queries** : Get all the colliders from a certain area
+
 
 
 Minimal exemple:
@@ -115,3 +116,21 @@ world:add_class("my_class3", {"my_class2"})
 
 =>Add a collider to the world, a collider is an oject that contains a body, an a "main" shape. 
 You can execute all fixtures/body/shapes functions on it.
+
+
+# Gotcha
+Some functions are used internaly or have the same name :
+don't use : 
+  -setUserData
+  -getUserData
+use from ._fixture, ._shape, ._body :
+  -isDestroyed
+  -testPoint
+  -getType
+  -raycast
+  -destroy
+  -release
+  -type
+  -typeOf
+
+To use Contact:getNormal() you need to identify witch shape is the first and witch is second
