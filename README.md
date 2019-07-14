@@ -16,8 +16,7 @@
 
 There are the concepts of this library :
 - **World** : One world equals one physic simulation, it's the hightest level container.
-- **Colliders** : A collider is an object residing in the world that react to the world physic and other colliders.
-When created it's composed of a body, a "main" shape and a fixture.
+- **Colliders** : A collider is an object residing in the world that react to the world physic and other colliders. When created it's composed of a body, a "main" shape and a fixture and contain all the functions of a LÖVE physics [Body](https://love2d.org/wiki/Body), [Fixture](https://love2d.org/wiki/Fixture) and [Shape](https://love2d.org/wiki/Shape) as well as additional ones defined by this library.
 - **Shapes** : A collider can have multiples shapes, two triangles and one rectangle for exemple. **!!! A **physics.lua** Shape  is not the same as a **love.physics** Shape, more on that in the Shape part !!!**
 
 - **Classes** : A collider can have ONE class, the class tell what other class the collider can collide with.
@@ -27,7 +26,7 @@ When created it's composed of a body, a "main" shape and a fixture.
   - **exit** : what to do when a collider/shape stop touching another one.
   - **presolve** : what to do each frame a collider/shape is touching another one before the physics is applied.
   - **postsolve** : what to do each frame a collider/shape is touching another one after the physics is applied.
-- **Joints** : Attach 2 colliders together in different ways
+- **Joints** : Attach 2 colliders together in different ways, see [Joints](https://love2d.org/wiki/Joint)
 - **Queries** : Get all the colliders from a certain area
 
 
