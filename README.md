@@ -9,9 +9,6 @@
 - Less LOC, no dependencies
 - I've found some bugs in Windfield (mainly collision callbacks)
 
-**Why snake_case ?**
-- I currently use snake_case in the library for convenience because I code in it, gonna switch to camelCase soon...
-
 **XXX don't work, I want XXX feature**
 - I'm open to suggestions, contact me here or on twitter ([@4v0v_](https://twitter.com/4v0v_/)).
 
@@ -21,7 +18,7 @@ There are the concepts of this library :
 - **World** : One world equals one physic simulation, it's the hightest level container.
 - **Colliders** : A collider is an object residing in the world that react to the world physic and other colliders.
 - **Classes** : A collider can have ONE class, the class tell what other class the collider can collide with.
-- **Shapes** : A collider can have multiples shapes, two triangles and one rectangle for exemple.
+- **Shapes** : A collider can have multiples shapes, two triangles and one rectangle for exemple. **!!! It's not the same as love.physics "shapes" !!!**
 - **Collision callbacks** : 
   - **enter** : what to do when a collider/shape begin touching another one.
   - **exit** : what to do when a collider/shape stop touching another one.
@@ -29,6 +26,22 @@ There are the concepts of this library :
   - **postsolve** : what to do each frame a collider/shape is touching another one after the physics is applied.
 - **Joints** : Attach 2 colliders together in different ways
 - **Queries** : Get all the colliders from a certain area
+
+```lua
+function love.load()
+    Physics = require("physics")
+
+    world = Physics()
+
+    local rect = world:addRectangle(0, 0, 100, 100, 0.3)
+    rect:applyAngularImpulse(20000)
+    rect:applyLinearImpulse(1000, 1000)
+end
+
+function love.update(dt) world:update(dt) end
+
+function love.draw() world:draw() end
+```
 
 
 ## API
