@@ -65,7 +65,7 @@ World = Physics([xg, yg, sleep])
 - `yg(number)`
 - `sleep(boolean)`
 
-Return: `World`
+*return :* `World`
 
 Create a new world, same as **love.physics.newWorld**.
 
@@ -91,7 +91,7 @@ World:setExit(function(shape1, shape2, contact) end)
 World:setPresolve(function(shape1, shape2, contact) end)
 World:setPostsolve(function(shape1, shape2, contact) end)
 ```
-Return: `self`
+*return :* `self`
 
 Global callback functions that is going to be called every time a collider touch (**enter**) stop touching (**exit**) is touching before the physics is applied (**presolve**), after the physics is applied (**postsolve**).
 
