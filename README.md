@@ -129,13 +129,7 @@ World:addJoint(joint_type, collider1, collider2, ...)
 ---
 ```lua
 World:addCollider(collider_type, ...)
-```
-Return:
-- `Collider`
-*Add a collider to the world, a collider is an oject that contains a body, an a "main" shape. 
-You can execute all fixtures/body/shapes functions on it.*
 
-```lua
 World:addRectangle(x, y, width, height, angle, type)
 World:addCircle(x, y, radius, type)
 World:addPolygon(x, y, vertices, type)
@@ -144,7 +138,12 @@ World:addChain(loop, vertices, type)
 ```
 **return :** `Collider`
 
-*Shortcut to `World:addCollider(...)`, default **type** for **rectangle**, **circle**, **polygon** is **dynamic** and **line**, **chain** is **static**.*
+*Add a collider to the world, a collider is an oject that contains a body, an a "main" shape. 
+You can execute all fixtures/body/shapes functions on it.*
+
+***addRectangle()**, ect... are shortcuts to `World:addCollider("rectangle")`.*
+
+*Default **type** for **rectangle**, **circle**, **polygon** is **dynamic** and **line**, **chain** is **static**.*
 
 
 
