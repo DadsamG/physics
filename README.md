@@ -67,14 +67,14 @@ World = Physics([xg, yg, sleep])
 
 **return :** `World`
 
-Create a new world, same as **love.physics.newWorld**.
+*Create a new world, same as **love.physics.newWorld**.*
 
 ---
 ```lua
 World:draw()
 ```
 
-Draw colliders, joints and queries, useful for debug and fast prototyping.
+*Draw colliders, joints and queries, useful for debug and fast prototyping.*
 
 ---
 ```lua 
@@ -82,7 +82,7 @@ World:update(dt)
 ```
 - `dt(number)`
 
-Update the world, put this into the **love.update** function.
+*Update the world, put this into the **love.update** function.*
 
 ---
 ```lua 
@@ -93,7 +93,7 @@ World:setPostsolve(function(shape1, shape2, contact) end)
 ```
 **return :** `self`
 
-Global callback functions that is going to be called every time a collider touch (**enter**) stop touching (**exit**) is touching before the physics is applied (**presolve**), after the physics is applied (**postsolve**).
+*Global callback functions that is going to be called every time a collider touch (**enter**) stop touching (**exit**) is touching before the physics is applied (**presolve**), after the physics is applied (**postsolve**).*
 
 !!! **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes !!!
 
@@ -106,8 +106,7 @@ World:addClass(name, ignore)
 
 **return :** `self`
 
-Add a class and what other classes it ignore, it's a wrapper around box2d categories / masks as explained here:
-https://love2d.org/forums/viewtopic.php?f=4&t=75441
+*Add a class and what other classes it ignore, it's a wrapper around box2d categories / masks as explained [here](https://love2d.org/forums/viewtopic.php?f=4&t=75441).*
 
 Exemple:
 ```lua
