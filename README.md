@@ -64,6 +64,7 @@ World = Physics([xg, yg, sleep])
 - `xg(number)`
 - `yg(number)`
 - `sleep(boolean)`
+
 Return: `World`
 
 Create a new world, same as **love.physics.newWorld**.
@@ -90,8 +91,7 @@ World:setExit(function(shape1, shape2, contact) end)
 World:setPresolve(function(shape1, shape2, contact) end)
 World:setPostsolve(function(shape1, shape2, contact) end)
 ```
-Return:
-- `self`
+Return: `self`
 
 Global callback functions that is going to be called every time a collider touch (**enter**) stop touching (**exit**) is touching before the physics is applied (**presolve**), after the physics is applied (**postsolve**).
 
@@ -103,8 +103,8 @@ World:addClass(name, ignore)
 ```
 - `name(string)`
 - `ignore(table)`
-Return:
-- `self`
+
+Return: `self`
 
 Add a class and what other classes it ignore, it's a wrapper around box2d categories / masks as explained here:
 https://love2d.org/forums/viewtopic.php?f=4&t=75441
@@ -123,8 +123,8 @@ world:addClass("my_class3", {"my_class2"})
 ```lua
 World:addJoint(joint_type, collider1, collider2, ...)
 ```
-Return:
-- `Joint`
+Return: `Joint`
+
 Add a joint that contains all the love.physics [Joint](https://love2d.org/wiki/Joint) functions.
 
 ---
@@ -143,41 +143,52 @@ World:addPolygon(x, y, vertices, type)
 World:addLine(x1, y1, x2, y2, type)
 World:addChain(loop, vertices, type)
 ```
-Return:
-- `Collider`
+Return: `Collider`
 
 Shortcut to `World:addCollider(...)`, default **type** for **rectangle**, **circle**, **polygon** is **dynamic** and **line**, **chain** is **static**.
 
-## Queries
 
+
+
+## Queries
 ```lua
 World:queryRectangle(x,y, width, height, class)
 World:queryCircle(x, y, radius, class)
 World:queryPolygon(verticles, class)
 World:queryLine(x1, y1, x2, y2, class)
 ```
-Return:
-- `{collider1, collider2, collider3, ...}`
+Return: `{collider1, collider2, collider3, ...}`
+
+
+
 
 ## Colliders
-
 ```lua 
 Collider:setEnter(function(shape1, shape2, contact) end)
 Collider:setExit(function(shape1, shape2, contact) end)
 Collider:setPresolve(function(shape1, shape2, contact) end)
 Collider:setPostsolve(function(shape1, shape2, contact) end)
 ```
-Return:
-- `self`
+Return: `self`
+
+
+
 
 ## Shapes
-
 ```lua 
 Shape:setEnter(function(shape1, shape2, contact) end)
 Shape:setExit(function(shape1, shape2, contact) end)
 Shape:setPresolve(function(shape1, shape2, contact) end)
 Shape:setPostsolve(function(shape1, shape2, contact) end)
 ```
+Return: `self`
+
+
+
+
+
+
+
 
 # Gotcha
 Some functions are used internaly or have the same name :
