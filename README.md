@@ -148,14 +148,19 @@ World:queryLine(x1, y1, x2, y2, class)
 
 ```lua 
 Collider:setEnter(function(shape1, shape2, contact) end)
-CollidersetExit(function(shape1, shape2, contact) end)
+Collider:setExit(function(shape1, shape2, contact) end)
 Collider:setPresolve(function(shape1, shape2, contact) end)
 Collider:setPostsolve(function(shape1, shape2, contact) end)
 ```
 
 ## Shapes
 
-
+```lua 
+Shape:setEnter(function(shape1, shape2, contact) end)
+Shape:setExit(function(shape1, shape2, contact) end)
+Shape:setPresolve(function(shape1, shape2, contact) end)
+Shape:setPostsolve(function(shape1, shape2, contact) end)
+```
 
 # Gotcha
 Some functions are used internaly or have the same name :
