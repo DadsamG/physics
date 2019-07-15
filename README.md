@@ -65,7 +65,7 @@ World = Physics([xg, yg, sleep])
 - `yg(number)`
 - `sleep(boolean)`
 
-*return :* `World`
+**return :** `World`
 
 Create a new world, same as **love.physics.newWorld**.
 
