@@ -122,9 +122,24 @@ world:addClass("my_class3", {"my_class2"})
 ```lua
 World:addJoint(joint_type, collider1, collider2, ...)
 ```
+- `joint_type(string)`
+
 **return :** `Joint`
 
 *Add a joint that contains all the love.physics [Joint](https://love2d.org/wiki/Joint) functions.*
+
+Joint types are : 
+- "distance" 
+- "friction" 
+- "gear"     
+- "motor"    
+- "mouse"    
+- "prismatic"
+- "pulley"   
+- "revolute" 
+- "rope"     
+- "weld"     
+- "wheel"    
 
 ---
 ```lua
@@ -155,7 +170,7 @@ World:queryCircle(x, y, radius, class)
 World:queryPolygon(verticles, class)
 World:queryLine(x1, y1, x2, y2, class)
 ```
-**return :** `{collider1, collider2, collider3, ...}`
+**return :** `{Collider1, Collider2, Collider3, ...}`
 
 
 
