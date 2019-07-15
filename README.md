@@ -91,7 +91,7 @@ World:setExit(function(shape1, shape2, contact) end)
 World:setPresolve(function(shape1, shape2, contact) end)
 World:setPostsolve(function(shape1, shape2, contact) end)
 ```
-*return :* `self`
+**return :** `self`
 
 Global callback functions that is going to be called every time a collider touch (**enter**) stop touching (**exit**) is touching before the physics is applied (**presolve**), after the physics is applied (**postsolve**).
 
@@ -104,7 +104,7 @@ World:addClass(name, ignore)
 - `name(string)`
 - `ignore(table)`
 
-Return: `self`
+**return :** `self`
 
 Add a class and what other classes it ignore, it's a wrapper around box2d categories / masks as explained here:
 https://love2d.org/forums/viewtopic.php?f=4&t=75441
@@ -123,7 +123,7 @@ world:addClass("my_class3", {"my_class2"})
 ```lua
 World:addJoint(joint_type, collider1, collider2, ...)
 ```
-Return: `Joint`
+**return :** `Joint`
 
 Add a joint that contains all the love.physics [Joint](https://love2d.org/wiki/Joint) functions.
 
@@ -143,7 +143,7 @@ World:addPolygon(x, y, vertices, type)
 World:addLine(x1, y1, x2, y2, type)
 World:addChain(loop, vertices, type)
 ```
-Return: `Collider`
+**return :** `Collider`
 
 Shortcut to `World:addCollider(...)`, default **type** for **rectangle**, **circle**, **polygon** is **dynamic** and **line**, **chain** is **static**.
 
@@ -157,7 +157,7 @@ World:queryCircle(x, y, radius, class)
 World:queryPolygon(verticles, class)
 World:queryLine(x1, y1, x2, y2, class)
 ```
-Return: `{collider1, collider2, collider3, ...}`
+**return :** `{collider1, collider2, collider3, ...}`
 
 
 
@@ -169,10 +169,47 @@ Collider:setExit(function(shape1, shape2, contact) end)
 Collider:setPresolve(function(shape1, shape2, contact) end)
 Collider:setPostsolve(function(shape1, shape2, contact) end)
 ```
-Return: `self`
+**return :** `self`
 
+---
+```lua 
+Collider:setData(data)
+```
+- `data(table)`: set a custom data to a collider
 
+**return :** `self`
 
+---
+```lua 
+Collider:setTag(tag)
+```
+- `tag(string)`: set a custom tag to a collider
+
+**return :** `self`
+
+---
+```lua 
+Collider:getClass()
+```
+**return :** `class(string)`
+
+---
+```lua 
+Collider:getData()
+```
+**return :** `data(table)`
+
+---
+```lua 
+Collider:getTag()
+```
+**return :** `tag(string)`
+
+---
+```lua 
+Collider:getShape(shape_tag)
+```
+**return :** `Shape` or `nil` is Shape doesn't exist in Collider.
 
 ## Shapes
 ```lua 
@@ -181,7 +218,7 @@ Shape:setExit(function(shape1, shape2, contact) end)
 Shape:setPresolve(function(shape1, shape2, contact) end)
 Shape:setPostsolve(function(shape1, shape2, contact) end)
 ```
-Return: `self`
+**return :** `self`
 
 
 
