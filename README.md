@@ -59,7 +59,7 @@ Physics = require("physics")
 ```
 ---
 ```lua 
-World = Physics([xg, yg, sleep])
+World = Physics(xg, yg, sleep)
 ```
 - `xg(number)`
 - `yg(number)`
@@ -67,7 +67,7 @@ World = Physics([xg, yg, sleep])
 
 **return :** `World`
 
-*Create a new world, same as **love.physics.newWorld**.*
+*Create a new world, same as **love.physics.newWorld(xg, yg, sleep)**.*
 
 ---
 ```lua
@@ -124,7 +124,7 @@ World:addJoint(joint_type, collider1, collider2, ...)
 ```
 **return :** `Joint`
 
-Add a joint that contains all the love.physics [Joint](https://love2d.org/wiki/Joint) functions.
+*Add a joint that contains all the love.physics [Joint](https://love2d.org/wiki/Joint) functions.*
 
 ---
 ```lua
@@ -132,8 +132,8 @@ World:addCollider(collider_type, ...)
 ```
 Return:
 - `Collider`
-Add a collider to the world, a collider is an oject that contains a body, an a "main" shape. 
-You can execute all fixtures/body/shapes functions on it.
+*Add a collider to the world, a collider is an oject that contains a body, an a "main" shape. 
+You can execute all fixtures/body/shapes functions on it.*
 
 ```lua
 World:addRectangle(x, y, width, height, angle, type)
@@ -144,7 +144,7 @@ World:addChain(loop, vertices, type)
 ```
 **return :** `Collider`
 
-Shortcut to `World:addCollider(...)`, default **type** for **rectangle**, **circle**, **polygon** is **dynamic** and **line**, **chain** is **static**.
+*Shortcut to `World:addCollider(...)`, default **type** for **rectangle**, **circle**, **polygon** is **dynamic** and **line**, **chain** is **static**.*
 
 
 
