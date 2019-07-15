@@ -216,7 +216,7 @@ Collider:getTag()
 ```lua 
 Collider:getShape(shape_tag)
 ```
-**return :** `Shape` or `nil` is Shape doesn't exist in Collider.
+**return :** `Shape` or `nil` if Shape doesn't exist in Collider.
 
 ## Shapes
 ```lua 
@@ -227,10 +227,48 @@ Shape:setPostsolve(function(shape1, shape2, contact) end)
 ```
 **return :** `self`
 
+---
+```lua 
+Shape:setAlpha(alpha)
+```
+- `alpha(number)`: alpha value.
 
+**return :** `self`
 
+---
+```lua 
+Shape:setColor(r,g,b,a)
+```
+- `r(number)`: red color.
+- `g(number)`: green color.
+- `b(number)`: blue color.
+- `[a(number)]`: alpha value.
 
+**return :** `self`
 
+---
+```lua 
+Shape:setDrawMode(mode)
+```
+- `mode(string)`: "line" or "fill".
+
+**return :** `self`
+
+---
+```lua 
+Shape:getCollider()
+```
+**return :** `Collider`
+
+*Get the the Collider containing the Shape.*
+
+---
+```lua 
+Shape:getClass()
+```
+**return :** `Class(string)`
+
+*Get the class of the Collider containing the Shape.*
 
 
 
