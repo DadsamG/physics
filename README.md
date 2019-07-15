@@ -64,6 +64,8 @@ World = Physics([xg, yg, sleep])
 - `xg(number)`
 - `yg(number)`
 - `sleep(boolean)`
+Return:
+- `World`
 
 Create a new world, same as **love.physics.newWorld**.
 
@@ -89,6 +91,8 @@ World:setExit(function(shape1, shape2, contact) end)
 World:setPresolve(function(shape1, shape2, contact) end)
 World:setPostsolve(function(shape1, shape2, contact) end)
 ```
+Return:
+- `self`
 
 Global callback functions that is going to be called every time a collider touch (**enter**) stop touching (**exit**) is touching before the physics is applied (**presolve**), after the physics is applied (**postsolve**).
 
@@ -100,6 +104,9 @@ World:addClass(name, ignore)
 ```
 - `name(string)`
 - `ignore(table)`
+Return:
+- `self`
+
 Add a class and what other classes it ignore, it's a wrapper around box2d categories / masks as explained here:
 https://love2d.org/forums/viewtopic.php?f=4&t=75441
 
@@ -117,12 +124,16 @@ world:addClass("my_class3", {"my_class2"})
 ```lua
 World:addJoint(joint_type, collider1, collider2, ...)
 ```
+Return:
+- `Joint`
 Add a joint that contains all the love.physics [Joint](https://love2d.org/wiki/Joint) functions.
 
 ---
 ```lua
 World:addCollider(collider_type, ...)
 ```
+Return:
+- `Collider`
 Add a collider to the world, a collider is an oject that contains a body, an a "main" shape. 
 You can execute all fixtures/body/shapes functions on it.
 
@@ -133,6 +144,9 @@ World:addPolygon(x, y, vertices, type)
 World:addLine(x1, y1, x2, y2, type)
 World:addChain(loop, vertices, type)
 ```
+Return:
+- `Collider`
+
 Shortcut to `World:addCollider(...)`, default **type** for **rectangle**, **circle**, **polygon** is **dynamic** and **line**, **chain** is **static**.
 
 ## Queries
@@ -143,6 +157,8 @@ World:queryCircle(x, y, radius, class)
 World:queryPolygon(verticles, class)
 World:queryLine(x1, y1, x2, y2, class)
 ```
+Return:
+- `{collider1, collider2, collider3, ...}`
 
 ## Colliders
 
@@ -152,6 +168,8 @@ Collider:setExit(function(shape1, shape2, contact) end)
 Collider:setPresolve(function(shape1, shape2, contact) end)
 Collider:setPostsolve(function(shape1, shape2, contact) end)
 ```
+Return:
+- `self`
 
 ## Shapes
 
