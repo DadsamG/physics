@@ -95,7 +95,7 @@ World:setPostsolve(function(shape1, shape2, contact) end)
 
 *Global callback functions that is going to be called every time a collider touch (**enter**) stop touching (**exit**) is touching before the physics is applied (**presolve**), after the physics is applied (**postsolve**).*
 
-!!! **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes !!!
+*** **shape1** and **shape2** are shapes from this library, **NOT** love.physics shapes !!!***
 
 ---
 ```lua 
@@ -128,18 +128,7 @@ World:addJoint(joint_type, collider1, collider2, ...)
 
 *Add a joint that contains all the love.physics [Joint](https://love2d.org/wiki/Joint) functions.*
 
-Joint types are : 
-- "distance" 
-- "friction" 
-- "gear"     
-- "motor"    
-- "mouse"    
-- "prismatic"
-- "pulley"   
-- "revolute" 
-- "rope"     
-- "weld"     
-- "wheel"    
+*Joint types are : "distance", "friction", "gear", "motor", "mouse", "prismatic", "pulley", "revolute", "rope", "weld", "wheel"*   
 
 ---
 ```lua
