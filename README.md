@@ -17,11 +17,11 @@
 
 - [Basics](#basics)
 - [API](#basics)
-- [World](#world)
-- [Joints](#joints)
-- [Queries](#queries)
-- [Colliders](#colliders)
-- [Shapes](#shapes)
+  - [World](#world)
+  - [Joints](#joints)
+  - [Queries](#queries)
+  - [Colliders](#colliders)
+  - [Shapes](#shapes)
 
 
 ## Basics
@@ -132,18 +132,6 @@ world:addClass("my_class3", {"my_class2"})
 
 ---
 ```lua
-World:addJoint(joint_type, collider1, collider2, ...)
-```
-- `joint_type(string)`
-
-**return :** `Joint`
-
-*Add a joint that contains all the love.physics [Joint](https://love2d.org/wiki/Joint) functions.*
-
-*Joint types are : "distance", "friction", "gear", "motor", "mouse", "prismatic", "pulley", "revolute", "rope", "weld", "wheel"*   
-
----
-```lua
 World:addCollider(collider_type, ...)
 
 World:addRectangle(x, y, width, height, angle, type)
@@ -161,8 +149,17 @@ You can execute all fixtures/body/shapes functions on it.*
 
 *Default **type** for **rectangle**, **circle**, **polygon** is **"dynamic"** and **line**, **chain** is **"static"**.*
 
+## Joints
+```lua
+World:addJoint(joint_type, collider1, collider2, ...)
+```
+- `joint_type(string)`
 
+**return :** `Joint`
 
+*Add a joint that contains all the love.physics [Joint](https://love2d.org/wiki/Joint) functions.*
+
+*Joint types are : "distance", "friction", "gear", "motor", "mouse", "prismatic", "pulley", "revolute", "rope", "weld", "wheel"*   
 
 ## Queries
 ```lua
@@ -172,9 +169,6 @@ World:queryPolygon(verticles, class)
 World:queryLine(x1, y1, x2, y2, class)
 ```
 **return :** `{Collider1, Collider2, Collider3, ...}`
-
-
-
 
 ## Colliders
 ```lua 
