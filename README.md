@@ -143,7 +143,7 @@ You can execute all fixtures/body/shapes functions on it.*
 
 ***addRectangle()**, ect... are shortcuts to `World:addCollider("rectangle")`.*
 
-*Default **type** for **rectangle**, **circle**, **polygon** is **dynamic** and **line**, **chain** is **static**.*
+*Default **type** for **rectangle**, **circle**, **polygon** is **"dynamic"** and **line**, **chain** is **"static"**.*
 
 
 
