@@ -1,8 +1,6 @@
 # PHYSICS
 
-<center> <video>(https://webmshare.com/play/93rvD) </video> </center>
-
-<video width="320" height="240" controls>
+<video width="500" height="500" controls>
   <source src="https://webmshare.com/play/93rvD" type="video/webm">
 </video>
 
