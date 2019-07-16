@@ -214,7 +214,7 @@ Collider:getTag()
 
 ---
 ```lua 
-Collider:getShape(shape_tag)
+Collider:getPShape(shape_tag)
 ```
 **return :** `Shape` or `nil` if Shape doesn't exist in Collider.
 
