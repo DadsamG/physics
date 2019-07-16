@@ -298,7 +298,7 @@ function Collider:setTag(tag)      self._tag   = tag  return self end
 function Collider:getClass()    return self._class       end
 function Collider:getTag()      return self._tag         end
 function Collider:getData(data) return self._data        end
-function Collider:getPShape(tag) print("lol") return self._shapes[tag] end
+function Collider:getPShape(tag) return self._shapes[tag] end
 function Collider:addShape(tag, shape_type, ...)
     assert(not self._shapes[tag], "Collider already have a shape called '" .. tag .."'.") 
     local _st, _a, _shape = shape_type, {...}
