@@ -42,6 +42,11 @@ There are the concepts of this library :
 - **Joints** : Attach 2 colliders together in different ways, see [Joints](https://love2d.org/wiki/Joint)
 - **Queries** : Get all the colliders from a certain area
 
+## Demos
+Every demo is self contained, open them as if they were normal Löve games.
+
+- **Demo1** is focused on Collision classes
+- **Demo2** is focused on Collision response
 
 
 Minimal exemple:
