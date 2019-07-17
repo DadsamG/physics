@@ -9,8 +9,9 @@
 **Why use it instead of Windfield ?**
 - Some new features !
 - Windfield is no longer maintained
+- Support the latest version of the Löve framework (11.2)
 - Less LOC, no dependencies
-- I've found some bugs in Windfield (mainly collision callbacks)
+- Some bugs found in Windfield are corrected (mainly collision callbacks)
 
 **XXX don't work, I want XXX feature**
 - I'm open to suggestions, contact me here or on twitter ([@4v0v_](https://twitter.com/4v0v_/)).
