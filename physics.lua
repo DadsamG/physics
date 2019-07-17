@@ -19,28 +19,28 @@ function World:new(xg, yg, sleep)
             local stitle         = shape1._id .. "\t" .. shape2._id
             local world          = coll1._world
 
-            world[callback](shape1, shape2, contact, ...)
-            shape1[callback](shape1, shape2, contact, ...)        
-            shape2[callback](shape2, shape1, contact, ...) 
+            world[callback](shape1, shape2, contact, false, ...)
+            shape1[callback](shape1, shape2, contact, false, ...)        
+            shape2[callback](shape2, shape1, contact, true,  ...) 
             
             if callback == "_enter" then 
                 if not world._collisions[ctitle] then 
                     world._collisions[ctitle] = {}
-                    coll1._enter(shape1, shape2, contact)
-                    coll2._enter(shape2, shape1, contact)
+                    coll1._enter(shape1, shape2, contact, false)
+                    coll2._enter(shape2, shape1, contact, true)
                 end
                 table.insert(world._collisions[ctitle], stitle)
             elseif callback == "_exit" then
                 for i,v in pairs(world._collisions[ctitle]) do if v == stitle then table.remove(world._collisions[ctitle], i) break end end
                 if #world._collisions[ctitle] == 0 then 
                     world._collisions[ctitle] = nil
-                    coll1._exit(shape1, shape2, contact)
-                    coll2._exit(shape2, shape1, contact)
+                    coll1._exit(shape1, shape2, contact, false)
+                    coll2._exit(shape2, shape1, contact, true)
                 end
 
             elseif callback == "_pre" or callback == "_post" then
-                coll1[callback](shape1, shape2, contact)
-                coll2[callback](shape2, shape1, contact)
+                coll1[callback](shape1, shape2, contact, false)
+                coll2[callback](shape2, shape1, contact, true)
             end
         end
     end
