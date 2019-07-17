@@ -107,10 +107,10 @@ World:update(dt)
 
 ---
 ```lua 
-World:setEnter(function(shape1, shape2, contact) end)
-World:setExit(function(shape1, shape2, contact) end)
-World:setPresolve(function(shape1, shape2, contact) end)
-World:setPostsolve(function(shape1, shape2, contact) end)
+World:setEnter(function(shape1, shape2, contact, inverted) end)
+World:setExit(function(shape1, shape2, contact, inverted) end)
+World:setPresolve(function(shape1, shape2, contact, inverted) end)
+World:setPostsolve(function(shape1, shape2, contact, inverted, ...) end)
 ```
 **return :** `self`
 
@@ -181,11 +181,17 @@ World:queryLine(x1, y1, x2, y2, class)
 
 ## Colliders
 ```lua 
-Collider:setEnter(function(shape1, shape2, contact) end)
-Collider:setExit(function(shape1, shape2, contact) end)
-Collider:setPresolve(function(shape1, shape2, contact) end)
-Collider:setPostsolve(function(shape1, shape2, contact) end)
+Collider:setEnter(function(shape1, shape2, contact, inverted) end)
+Collider:setExit(function(shape1, shape2, contact, inverted) end)
+Collider:setPresolve(function(shape1, shape2, contact, inverted) end)
+Collider:setPostsolve(function(shape1, shape2, contact, inverted, ...) end)
 ```
+  - `shape1(Shape)`: the Shape of the current Collider 
+  - `shape2(Shape)`: the Shape of the other Collider 
+  - `contact(Contact)`: [Contact](https://love2d.org/wiki/Contact)
+  - `inverted(boolean)`: if **true** then the first **love.physics shape** returned by `Contact:getNormal()` and `Contact:getPositions()` correspond to **shape2**, else it's **shape1**
+  
+  
 **return :** `self`
 
 ---
@@ -230,10 +236,10 @@ Collider:getPShape(shape_tag)
 
 ## Shapes
 ```lua 
-Shape:setEnter(function(shape1, shape2, contact) end)
-Shape:setExit(function(shape1, shape2, contact) end)
-Shape:setPresolve(function(shape1, shape2, contact) end)
-Shape:setPostsolve(function(shape1, shape2, contact) end)
+Shape:setEnter(function(shape1, shape2, contact, inverted) end)
+Shape:setExit(function(shape1, shape2, contact, inverted) end)
+Shape:setPresolve(function(shape1, shape2, contact, inverted) end)
+Shape:setPostsolve(function(shape1, shape2, contact, inverted, ...) end)
 ```
 **return :** `self`
 
