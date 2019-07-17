@@ -8,7 +8,7 @@
 
 **Why use it instead of Windfield ?**
 - Some new features !
-- Windfield is no longer maintened
+- Windfield is no longer maintained
 - Less LOC, no dependencies
 - I've found some bugs in Windfield (mainly collision callbacks)
 
