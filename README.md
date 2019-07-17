@@ -49,8 +49,7 @@ Every demo is self contained, open them as if they were normal Löve games.
 - **Demo1** is focused on **Collision classes**
 - **Demo2** is focused on **Collision responses**
 
-
-Minimal exemple:
+_Minimal exemple :_
 ```lua
 function love.load()
     Physics = require("physics")
@@ -71,10 +70,10 @@ function love.draw()
 end
 ```
 
-
 ## API
 
 ### World 
+---
 ```lua
 Physics = require("physics")
 ```
@@ -88,14 +87,14 @@ World = Physics(xg, yg, sleep)
 
 **return :** `World`
 
-*Create a new world, same as **love.physics.newWorld(xg, yg, sleep)**.*
+_Create a new world, same as **love.physics.newWorld(xg, yg, sleep)**._
 
 ---
 ```lua
 World:draw()
 ```
 
-*Draw colliders, joints and queries, useful for debug and fast prototyping.*
+_Draw colliders, joints and queries, useful for debug and fast prototyping._
 
 ---
 ```lua 
@@ -103,7 +102,7 @@ World:update(dt)
 ```
 - `dt(number)`: _delta time._
 
-*Update the world, put this into the **love.update** function.*
+_Update the world, put this into the **love.update** function._
 
 ---
 ```lua 
@@ -112,12 +111,6 @@ World:setExit(function(shape1, shape2, contact) end)
 World:setPresolve(function(shape1, shape2, contact) end)
 World:setPostsolve(function(shape1, shape2, contact, ...) end)
 ```
-```lua 
-Shape:setEnter(function(shape1, shape2, contact, inverted) end)
-Shape:setExit(function(shape1, shape2, contact, inverted) end)
-Shape:setPresolve(function(shape1, shape2, contact, inverted) end)
-Shape:setPostsolve(function(shape1, shape2, contact, inverted, ...) end)
-```
   - `shape1(Shape)`: the **_love.physics shape_** of the current **_Collider_**
   - `shape2(Shape)`: the **_love.physics shape_** of the other **_Collider_**
   - `contact(Contact)`: [Contact](https://love2d.org/wiki/Contact)
@@ -125,7 +118,7 @@ Shape:setPostsolve(function(shape1, shape2, contact, inverted, ...) end)
 
 **return :** `self`
 
-*Global callback functions that is going to be called every time a collider touch (**enter**) stop touching (**exit**) is touching before the physics is applied (**presolve**), after the physics is applied (**postsolve**).*
+_Global callback functions that is going to be called every time a collider touch (**enter**) stop touching (**exit**) is touching before the physics is applied (**presolve**), after the physics is applied (**postsolve**)._
 
 **shape1 and shape2 are shapes from this library, NOT love.physics shapes.**
 
