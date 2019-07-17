@@ -33,7 +33,7 @@ _**You can contact me here or on twitter ([@4v0v_](https://twitter.com/4v0v_/)).
 
 There are the concepts of this library :
 - **World** : _Where the physic simulation occurs, it's the hightest level container. Contains all the functions of a **[love.physics world](https://love2d.org/wiki/World)** as well as additional ones defined by this library.._
-- **Colliders** : _Base object of the library, react to the world physic and other colliders. Contains all the functions of a **Love.physics [body](https://love2d.org/wiki/Body)**, **[fixture](https://love2d.org/wiki/Fixture)** and **[shape](https://love2d.org/wiki/Shape)** as well as additional ones defined by this library._
+- **Colliders** : _Base object of the library, react to the world physic and other colliders. Contains all the functions of a **love.physics [body](https://love2d.org/wiki/Body)**, **[fixture](https://love2d.org/wiki/Fixture)** and **[shape](https://love2d.org/wiki/Shape)** as well as additional ones defined by this library._
 - **Shapes** : _A collider can have multiples **Shapes**. A **Shape** is not the same as a **love.physics shape**._
 - **Classes** : _A collider can have **ONE** class, the class tell what other class the collider can collide with._
 - **Collision callbacks** : 
