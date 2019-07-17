@@ -13,7 +13,7 @@
 - Less LOC, no dependencies
 - Some bugs found in Windfield are corrected (mainly collision callbacks)
 
-_You can contact me here or on twitter (**[@4v0v_](https://twitter.com/4v0v_/)**)._
+_**You can contact me here or on twitter ([@4v0v_](https://twitter.com/4v0v_/)).**_
 
 
 ## Content
