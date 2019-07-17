@@ -73,10 +73,11 @@ end
 ## API
 
 ### World 
----
 ```lua
-Physics = require("physics")
+Physics = require("path/to/physics")
 ```
+_Initialize the library._
+
 ---
 ```lua 
 World = Physics(xg, yg, sleep)
