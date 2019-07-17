@@ -19,6 +19,7 @@
 ## Content
 
 - [Basics](#basics)
+- [Demos](#demos)
 - [API](#basics)
   - [World](#world)
   - [Joints](#joints)
@@ -45,8 +46,8 @@ There are the concepts of this library :
 ## Demos
 Every demo is self contained, open them as if they were normal Löve games.
 
-- **Demo1** is focused on Collision classes
-- **Demo2** is focused on Collision response
+- **Demo1** is focused on **Collision classes**
+- **Demo2** is focused on **Collision responses**
 
 
 Minimal exemple:
@@ -282,18 +283,18 @@ Shape:getClass()
 
 
 # Gotcha
-Some functions are used internaly or have the same name :
-don't use : 
-  -setUserData
-  -getUserData
-use from ._fixture, ._shape, ._body :
-  -isDestroyed
-  -testPoint
-  -getType
-  -raycast
-  -destroy
-  -release
-  -type
-  -typeOf
+Some functions are used internaly, **DON'T USE THEM**:
+  - setUserData
+  - getUserData
+  
+Some functions have a similar name, use them from **._fixture**, **._shape**, **._body** :
+  - isDestroyed()
+  - testPoint()
+  - getType()
+  - raycast()
+  - destroy()
+  - release()
+  - type()
+  - typeOf()
 
 To use Contact:getNormal() you need to identify witch shape is the first and witch is second
