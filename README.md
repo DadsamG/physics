@@ -31,8 +31,8 @@
 ## Basics
 
 There are the concepts of this library :
-- **World** : One world equals one physic simulation, it's the hightest level container.
-- **Colliders** : Base object of the library, reside in the world, react to the world physic and other colliders. When created it's composed 1 **main** **physics.lua Shape** and contain all(*see Gotcha part) the functions of a LÖVE physics [Body](https://love2d.org/wiki/Body), [Fixture](https://love2d.org/wiki/Fixture) and [Shape](https://love2d.org/wiki/Shape) as well as additional ones defined by this library.
+- **World** : WHere the physic simulation occurs, it's the hightest level container.
+- **Colliders** : Base object of the library, react to the world physic and other colliders. Contains all the functions of a LÖVE physics [Body](https://love2d.org/wiki/Body), [Fixture](https://love2d.org/wiki/Fixture) and [Shape](https://love2d.org/wiki/Shape) as well as additional ones defined by this library.
 - **Shapes** : A collider can have multiples shapes, two triangles and one rectangle for exemple. A **physics.lua** Shape  is not the same as a **love.physics** Shape, more on that in the **Shape** part.
 - **Classes** : A collider can have ONE class, the class tell what other class the collider can collide with.
 - **Collision callbacks** : 
@@ -157,8 +157,9 @@ World:addChain(loop, vertices, type)
 ```
 **return :** `Collider`
 
-*Add a collider to the world, a collider is an oject that contains a body, an a "main" shape. 
-You can execute all fixtures/body/shapes functions on it.*
+_Add a collider to the world. 
+You can execute all fixtures/body/shapes functions on it.
+Every Colldier is initialized with a **main** Shape._
 
 ***addRectangle()**, ect... are shortcuts to `World:addCollider("rectangle")`.*
 
@@ -238,6 +239,12 @@ Collider:getTag()
 ---
 ```lua 
 Collider:getPShape(shape_tag)
+```
+**return :** `Shape` or `nil` if Shape doesn't exist in Collider.
+
+---
+```lua 
+Collider:addShape(shape_tag, shape_type, ...)
 ```
 **return :** `Shape` or `nil` if Shape doesn't exist in Collider.
 
