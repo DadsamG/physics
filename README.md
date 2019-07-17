@@ -82,9 +82,9 @@ Physics = require("physics")
 ```lua 
 World = Physics(xg, yg, sleep)
 ```
-- `xg(number)`
-- `yg(number)`
-- `sleep(boolean)`
+- `xg(number)`: _horizontal gravity._ 
+- `yg(number)`: _vertical gravity._
+- `sleep(boolean)`: _whether the bodies in this world are allowed to sleep._
 
 **return :** `World`
 
@@ -101,7 +101,7 @@ World:draw()
 ```lua 
 World:update(dt)
 ```
-- `dt(number)`
+- `dt(number)`: _delta time._
 
 *Update the world, put this into the **love.update** function.*
 
