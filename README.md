@@ -70,7 +70,7 @@ function love.draw()
 end
 ```
 
-## API
+# API
 
 ## World
 
