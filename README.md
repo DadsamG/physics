@@ -32,16 +32,16 @@
 ## Basics
 
 There are the concepts of this library :
-- **World** : _Where the physic simulation occurs, it's the hightest level container._
-- **Colliders** : _Base object of the library, react to the world physic and other colliders. Contains all the functions of a LÖVE physics [Body](https://love2d.org/wiki/Body), [Fixture](https://love2d.org/wiki/Fixture) and [Shape](https://love2d.org/wiki/Shape) as well as additional ones defined by this library._
-- **Shapes** : _A collider can have multiples shapes, two triangles and one rectangle for exemple. A **physics.lua** Shape  is not the same as a **love.physics** Shape, more on that in the **Shape** part._
-- **Classes** : _A collider can have ONE class, the class tell what other class the collider can collide with._
+- **World** : _Where the physic simulation occurs, it's the hightest level container. Contains all the functions of a **Love.physics [world](https://love2d.org/wiki/World)**._
+- **Colliders** : _Base object of the library, react to the world physic and other colliders. Contains all the functions of a **Love.physics [body](https://love2d.org/wiki/Body)**, **[fixture](https://love2d.org/wiki/Fixture)** and **[shape](https://love2d.org/wiki/Shape)** as well as additional ones defined by this library._
+- **Shapes** : _A collider can have multiples **Shapes**. A **Shape** is not the same as a **love.physics shape**._
+- **Classes** : _A collider can have **ONE** class, the class tell what other class the collider can collide with._
 - **Collision callbacks** : 
   - **enter** : _What to do when a collider/shape begin touching another one._
   - **exit** : _What to do when a collider/shape stop touching another one._
   - **presolve** : _What to do each frame a collider/shape is touching another one before the physics is applied._
   - **postsolve** : _What to do each frame a collider/shape is touching another one after the physics is applied._
-- **Joints** : _Attach 2 colliders together in different ways, see [Joints](https://love2d.org/wiki/Joint)._
+- **Joints** : _Attach 2 colliders together in different ways. Contains all the functions of a **Love.physics [joint](https://love2d.org/wiki/Joint)**._
 - **Queries** : _Get all the colliders from an area._
 
 ## Demos
