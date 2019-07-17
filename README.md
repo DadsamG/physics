@@ -112,6 +112,17 @@ World:setExit(function(shape1, shape2, contact) end)
 World:setPresolve(function(shape1, shape2, contact) end)
 World:setPostsolve(function(shape1, shape2, contact, ...) end)
 ```
+```lua 
+Shape:setEnter(function(shape1, shape2, contact, inverted) end)
+Shape:setExit(function(shape1, shape2, contact, inverted) end)
+Shape:setPresolve(function(shape1, shape2, contact, inverted) end)
+Shape:setPostsolve(function(shape1, shape2, contact, inverted, ...) end)
+```
+  - `shape1(Shape)`: the **_love.physics shape_** of the current **_Collider_**
+  - `shape2(Shape)`: the **_love.physics shape_** of the other **_Collider_**
+  - `contact(Contact)`: [Contact](https://love2d.org/wiki/Contact)
+  - `...`: **_normal_impulse1_**, **_tangent_impulse1_**, **_normal_impulse2_**, **_tangent_impulse2_** (see [Notes](https://love2d.org/wiki/World:setCallbacks))
+
 **return :** `self`
 
 *Global callback functions that is going to be called every time a collider touch (**enter**) stop touching (**exit**) is touching before the physics is applied (**presolve**), after the physics is applied (**postsolve**).*
@@ -186,11 +197,11 @@ Collider:setExit(function(shape1, shape2, contact, inverted) end)
 Collider:setPresolve(function(shape1, shape2, contact, inverted) end)
 Collider:setPostsolve(function(shape1, shape2, contact, inverted, ...) end)
 ```
-  - `shape1(Shape)`: the Shape of the current Collider 
-  - `shape2(Shape)`: the Shape of the other Collider 
+  - `shape1(Shape)`: the **_love.physics shape_** of the current **_Collider_**
+  - `shape2(Shape)`: the **_love.physics shape_** of the other **_Collider_**
   - `contact(Contact)`: [Contact](https://love2d.org/wiki/Contact)
-  - `inverted(boolean)`: if **true** then the first **love.physics shape** returned by **[Contact:getNormal()](https://love2d.org/wiki/Contact:getNormal)** and **[Contact:getPositions()](https://love2d.org/wiki/Contact:getPositions)** correspond to **shape2**, else it's **shape1**
-  - `...`: **normal_impulse1**, **tangent_impulse1**, **normal_impulse2**, **tangent_impulse2** (see [Notes](https://love2d.org/wiki/World:setCallbacks))
+  - `inverted(boolean)`: if **_true_** then the first **_love.physics shape_** returned by **[Contact:getNormal()](https://love2d.org/wiki/Contact:getNormal)** and **[Contact:getPositions()](https://love2d.org/wiki/Contact:getPositions)** correspond to **_shape2_** and the second to **_shape_**.
+  - `...`: **_normal_impulse1_**, **_tangent_impulse1_**, **_normal_impulse2_**, **_tangent_impulse2_** (see [Notes](https://love2d.org/wiki/World:setCallbacks))
   
   
 **return :** `self`
@@ -242,10 +253,10 @@ Shape:setExit(function(shape1, shape2, contact, inverted) end)
 Shape:setPresolve(function(shape1, shape2, contact, inverted) end)
 Shape:setPostsolve(function(shape1, shape2, contact, inverted, ...) end)
 ```
-  - `shape1(Shape)`: the **_Shape_** of the current **_Collider_**
-  - `shape2(Shape)`: the **_Shape_** of the other **_Collider_**
+  - `shape1(Shape)`: the **_love.physics shape_** of the current **_Collider_**
+  - `shape2(Shape)`: the **_love.physics shape_** of the other **_Collider_**
   - `contact(Contact)`: [Contact](https://love2d.org/wiki/Contact)
-  - `inverted(boolean)`: if **_true_** then the first **_love.physics shape_** returned by **[Contact:getNormal()](https://love2d.org/wiki/Contact:getNormal)** and **[Contact:getPositions()](https://love2d.org/wiki/Contact:getPositions)** correspond to **_shape2_**, if **_false_** it correspond to **_shape1_**
+  - `inverted(boolean)`: if **_true_** then the first **_love.physics shape_** returned by **[Contact:getNormal()](https://love2d.org/wiki/Contact:getNormal)** and **[Contact:getPositions()](https://love2d.org/wiki/Contact:getPositions)** correspond to **_shape2_** and the second to **_shape_**.
   - `...`: **_normal_impulse1_**, **_tangent_impulse1_**, **_normal_impulse2_**, **_tangent_impulse2_** (see [Notes](https://love2d.org/wiki/World:setCallbacks))
  
 **return :** `self`
