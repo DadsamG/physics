@@ -72,7 +72,8 @@ end
 
 ## API
 
-### World 
+## World
+
 ```lua
 Physics = require("path/to/physics")
 ```
