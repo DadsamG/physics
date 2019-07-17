@@ -245,7 +245,7 @@ Shape:setPostsolve(function(shape1, shape2, contact, inverted, ...) end)
   - `shape1(Shape)`: the **_Shape_** of the current **_Collider_**
   - `shape2(Shape)`: the **_Shape_** of the other **_Collider_**
   - `contact(Contact)`: [Contact](https://love2d.org/wiki/Contact)
-  - `inverted(boolean)`: if **_true_** then the first **_love.physics shape_** returned by **[Contact:getNormal()](https://love2d.org/wiki/Contact:getNormal)** and **[Contact:getPositions()](https://love2d.org/wiki/Contact:getPositions)** correspond to **_shape2_**, else it's **_shape1_**
+  - `inverted(boolean)`: if **_true_** then the first **_love.physics shape_** returned by **[Contact:getNormal()](https://love2d.org/wiki/Contact:getNormal)** and **[Contact:getPositions()](https://love2d.org/wiki/Contact:getPositions)** correspond to **_shape2_**, if **_false_** it correspond to **_shape1_**
   - `...`: **_normal_impulse1_**, **_tangent_impulse1_**, **_normal_impulse2_**, **_tangent_impulse2_** (see [Notes](https://love2d.org/wiki/World:setCallbacks))
  
 **return :** `self`
