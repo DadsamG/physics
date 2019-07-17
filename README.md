@@ -32,17 +32,17 @@
 ## Basics
 
 There are the concepts of this library :
-- **World** : WHere the physic simulation occurs, it's the hightest level container.
-- **Colliders** : Base object of the library, react to the world physic and other colliders. Contains all the functions of a LÖVE physics [Body](https://love2d.org/wiki/Body), [Fixture](https://love2d.org/wiki/Fixture) and [Shape](https://love2d.org/wiki/Shape) as well as additional ones defined by this library.
-- **Shapes** : A collider can have multiples shapes, two triangles and one rectangle for exemple. A **physics.lua** Shape  is not the same as a **love.physics** Shape, more on that in the **Shape** part.
-- **Classes** : A collider can have ONE class, the class tell what other class the collider can collide with.
+- **World** : _where the physic simulation occurs, it's the hightest level container._
+- **Colliders** : _base object of the library, react to the world physic and other colliders. Contains all the functions of a LÖVE physics [Body](https://love2d.org/wiki/Body), [Fixture](https://love2d.org/wiki/Fixture) and [Shape](https://love2d.org/wiki/Shape) as well as additional ones defined by this library._
+- **Shapes** : _a collider can have multiples shapes, two triangles and one rectangle for exemple. A **physics.lua** Shape  is not the same as a **love.physics** Shape, more on that in the **Shape** part._
+- **Classes** : _a collider can have ONE class, the class tell what other class the collider can collide with._
 - **Collision callbacks** : 
-  - **enter** : what to do when a collider/shape begin touching another one.
-  - **exit** : what to do when a collider/shape stop touching another one.
-  - **presolve** : what to do each frame a collider/shape is touching another one before the physics is applied.
-  - **postsolve** : what to do each frame a collider/shape is touching another one after the physics is applied.
-- **Joints** : Attach 2 colliders together in different ways, see [Joints](https://love2d.org/wiki/Joint)
-- **Queries** : Get all the colliders from a certain area
+  - **enter** : _what to do when a collider/shape begin touching another one._
+  - **exit** : _what to do when a collider/shape stop touching another one._
+  - **presolve** : _what to do each frame a collider/shape is touching another one before the physics is applied._
+  - **postsolve** : _what to do each frame a collider/shape is touching another one after the physics is applied._
+- **Joints** : _attach 2 colliders together in different ways, see [Joints](https://love2d.org/wiki/Joint)._
+- **Queries** : _get all the colliders from an area._
 
 ## Demos
 Every demo is self contained, open them as if they were normal Löve games.
