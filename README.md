@@ -26,6 +26,7 @@
   - [Queries](#queries)
   - [Colliders](#colliders)
   - [Shapes](#shapes)
+- [Gotcha](#gotcha)
 
 
 ## Basics
@@ -310,17 +311,15 @@ Shape:getClass()
 
 # Gotcha
 Some functions are used internaly, **DON'T USE THEM**:
-  - setUserData
-  - getUserData
+  - `setUserData()`
+  - `getUserData()`
   
 Some functions have a similar name, use them from **._fixture**, **._shape**, **._body** :
-  - isDestroyed()
-  - testPoint()
-  - getType()
-  - raycast()
-  - destroy()
-  - release()
-  - type()
-  - typeOf()
-
-To use Contact:getNormal() you need to identify witch shape is the first and witch is second
+  - `isDestroyed()`
+  - `testPoint()`
+  - `getType()`
+  - `raycast()`
+  - `destroy()`
+  - `release()`
+  - `type()`
+  - `typeOf()`
