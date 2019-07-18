@@ -13,6 +13,6 @@
 - Less LOC, no dependencies
 - Some bugs found in Windfield are corrected (mainly collision callbacks)
 
-## Documentation is in the [WIKI](https://github.com/4v0v/physics/wiki)
+_**Documentation is in the [WIKI](https://github.com/4v0v/physics/wiki)**_
 
 _**You can contact me here or on twitter ([@4v0v_](https://twitter.com/4v0v_/)).**_
