@@ -387,6 +387,7 @@ function Collider:removeShape(tag)
     self._shapes[tag]._collider = nil
     self._shapes[tag]._shape    = nil
     self._shapes[tag]           = nil
+    return self
 end
 function Collider:destroy()
     for k, v in pairs(self._world._collisions) do if k:find(self._id) then self._world._collisions[k] = nil end end
