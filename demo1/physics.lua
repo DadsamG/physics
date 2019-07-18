@@ -400,6 +400,7 @@ function Collider:destroy()
         v._shape    = nil
         v._collider = nil
     end
+    self._data = nil
     self._body:setUserData(nil)
     self._body:destroy()
     self._body = nil
