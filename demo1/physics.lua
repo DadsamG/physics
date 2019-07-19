@@ -420,7 +420,7 @@ function Shape:setColor(r, g, b, a) self._color = {r = r, g = g, b = b, a = a or
 function Shape:setDrawMode(mode) self._draw_mode = mode return self end
 function Shape:getCollider() return self._collider        end
 function Shape:getClass()    return self._collider._class end
-function Shape:getCtag()     return self._collider._tag   end
+function Shape:getCTag()     return self._collider._tag   end
 function Shape:getTag()      return self._tag             end
 function Shape:destroy() self._collider:remove_shape(self._tag) end
 
