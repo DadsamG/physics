@@ -47,8 +47,11 @@ function World:new(xg, yg, sleep)
             world[callback](shape1, shape2, contact, false, ...)
             shape1[callback](shape1, shape2, contact, false, ...)        
             shape2[callback](shape2, shape1, contact, true,  ...) 
+            if callback == "_pre" or callback == "_post" then
+                coll1[callback](shape1, shape2, contact, false)
+                coll2[callback](shape2, shape1, contact, true)
             
-            if callback == "_enter" then 
+            elseif callback == "_enter" then 
                 if not world._collisions[ctitle] then 
                     world._collisions[ctitle] = {}
                     coll1._enter(shape1, shape2, contact, false)
@@ -62,10 +65,6 @@ function World:new(xg, yg, sleep)
                     coll1._exit(shape1, shape2, contact, false)
                     coll2._exit(shape2, shape1, contact, true)
                 end
-
-            elseif callback == "_pre" or callback == "_post" then
-                coll1[callback](shape1, shape2, contact, false)
-                coll2[callback](shape2, shape1, contact, true)
             end
         end
     end
