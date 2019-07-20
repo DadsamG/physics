@@ -1,11 +1,10 @@
 # PHYSICS
 <p align="center">
-  
+    <img width= "600px" src="https://s3.gifyu.com/images/ga654d75960887e22.gif"/>
 </p>
 
 <p align="center">
-  <img width= "450px" src="https://s3.gifyu.com/images/ga654d75960887e22.gif"/>
-  <img width= "450px" src="https://s3.gifyu.com/images/g210e2b5ec0666532b.gif"/>
+  <img width= "600px" src="https://s3.gifyu.com/images/g210e2b5ec0666532b.gif"/>
 </p>
 
 
