@@ -1,7 +1,6 @@
 # PHYSICS
-
 <p align="center">
-  <img src="https://media.giphy.com/media/hV7bY9nSLmjIXIzuVL/giphy.gif"/>
+  <img src="https://s3.gifyu.com/images/ga654d75960887e22.gif"/>
 </p>
 
 <p align="center">
