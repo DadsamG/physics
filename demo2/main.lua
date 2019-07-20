@@ -28,8 +28,6 @@ function love.load()
     other_circ2:setType("static")
     mousejoint = world:addJoint("mouse", mouse, love.mouse.getPosition())
 
-
-
     top:setEnter(function(s1, s2, c, i) 
         if s2:getClass() == "Wall" then
             if not t:is_timer('tween_bg_color') then bg_color = {r = rand(), g = rand(), b = rand()} end
@@ -52,7 +50,6 @@ function love.load()
     mouse:setPresolve(function(s1, s2, c, i) 
         if s2:getCTag() == "other_circle2" then 
             bg_color = {r = rand(), g = rand(), b = rand()}
-            -- rect:getPShape("main"):setColor(rand(), rand(), rand())
         end
     end)
 
